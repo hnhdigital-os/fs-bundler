@@ -199,7 +199,7 @@ class RevisionPlugin extends BasePlugin
         }
 
         if (!Arr::get($this->options, 'cache')) {
-            $this->processMinifyFile($source_path, $destination_path);
+            $this->runFileMinification($source_path, $destination_path);
 
             return;
         }
@@ -212,7 +212,7 @@ class RevisionPlugin extends BasePlugin
         $minify_previous_path = Arr::get($this->options, 'cache-path').'/'.$minify_file_hash.'.'.$minify_contents_hash;
 
         if (!file_exists($minify_previous_path)) {
-            $this->processMinifyFile($source_path, $minify_previous_path);
+            $this->runFileMinification($source_path, $minify_previous_path);
         }
 
         $this->copyFile($minify_previous_path, $destination_path);
@@ -227,7 +227,15 @@ class RevisionPlugin extends BasePlugin
         }
     }
 
-    private function processMinifyFile($source_path, $destination_path)
+    /**
+     * Run the file minificiation.
+     *
+     * @param string $source_path
+     * @param string $destination_path
+     *
+     * @return void
+     */
+    private function runFileMinification($source_path, $destination_path)
     {
         $class = '\\MatthiasMullie\\Minify\\'.strtoupper(pathinfo($source_path, PATHINFO_EXTENSION));
         (new $class($source_path))->minify($destination_path);
