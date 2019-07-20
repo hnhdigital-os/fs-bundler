@@ -19,6 +19,7 @@ class RunCommand extends Command
     protected $signature = 'run
                             {--config= : Config file path}
                             {--task-id= : Run this specific task}
+                            {--list-only : List the tasks}
                             {--dry : Run tasks dry}';
 
     /**
@@ -93,11 +94,21 @@ class RunCommand extends Command
     {
         $this->cwd = getcwd();
 
+        $this->info('Running bundler...');
+        $this->line('');
+
         $this->parseConfig();
+
+
+        $this->info('Verifying...');
+
+        if ($this->getOutput()->isVerbose()) {
+            $this->line('');
+        }
 
         foreach ($this->tasks as $task) {
             if ($this->getOutput()->isVerbose()) {
-                $this->line(sprintf('Verifying #%s <info>%s</info>', $task->getId(), $task->getName()));
+                $this->line(sprintf('#%s <info>%s</info>', $task->getId(), $task->getName()));
             }
 
             if (!$task->verify()) {
@@ -108,21 +119,56 @@ class RunCommand extends Command
             }
         }
 
-        if ($this->option('task-id')) {
-            $this->handleTask($this->tasks[$this->option('task-id')]);
+        if ($this->getOutput()->isVerbose()) {
+            $this->line('');
+        }
 
+        if ($this->option('list-only')) {
+            $this->line('');
+            $this->line('Tasks:');
+
+            foreach ($this->tasks as $task) {
+                $this->line(sprintf('#%s <info>%s</info>', $task->getId(), $task->getName()));
+            }
+
+            return;
+        }
+
+        $this->info('Processing...');
+
+        if ($this->getOutput()->isVerbose()) {
+            $this->line('');
+        }
+
+        if (!is_null($this->option('task-id'))) {
+            $this->handleTask($this->tasks[(int) $this->option('task-id')]);
+
+            $this->info('Completed.');
             return;
         }
 
         foreach ($this->tasks as $task) {
             $this->handleTask($task);
         }
+
+        if ($this->getOutput()->isVerbose()) {
+            $this->line('');
+        }
+
+        $this->info('Completed.');
     }
 
+    /**
+     * Handle a given task.
+     *
+     * @param Plugin $task
+     *
+     * @return void
+     */
     private function handleTask($task)
     {
         if ($this->getOutput()->isVerbose()) {
-            $this->line(sprintf('Processing #%s <info>%s</info>', $task->getId(), $task->getName()));
+            $this->line(sprintf('#%s <info>%s</info>', $task->getId(), $task->getName()));
         }
 
         $task->handle();
@@ -137,6 +183,10 @@ class RunCommand extends Command
      */
     public function getCwd($path = '')
     {
+        if ($path === false) {
+            return false;
+        }
+
         return $this->cwd.'/'.$path;
     }
 
@@ -164,7 +214,7 @@ class RunCommand extends Command
 
         // Check config path exists.
         if (!file_exists($this->config_yaml_path)) {
-            $this->error(sprintf('Unable to find config file: %s', $this->config_yaml_path));
+            $this->error(sprintf('   Unable to find config file: %s', $this->config_yaml_path));
 
             return false;
         }
@@ -173,7 +223,7 @@ class RunCommand extends Command
         try {
             $this->config = Yaml::parse(file_get_contents($this->config_yaml_path));
         } catch (ParseException $e) {
-            $this->error(sprintf('Unable to parse .elixir.yml: %s', $e->getMessage()));
+            $this->error(sprintf('   Unable to parse .elixir.yml: %s', $e->getMessage()));
 
             return false;
         }
