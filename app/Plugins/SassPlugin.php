@@ -51,13 +51,6 @@ class SassPlugin extends BasePlugin
     private $source_map;
 
     /**
-     * Source Map Options.
-     *
-     * @var array
-     */
-    private $source_map_options = [];
-
-    /**
      * Source Map Keys.
      *
      * @var array
@@ -83,8 +76,7 @@ class SassPlugin extends BasePlugin
         $this->src_path = $this->process->getCwd(Arr::get($this->config, 'src'));
         $this->dest_path = $this->process->getCwd(Arr::get($this->config, 'dest'));
         $this->import_paths = Arr::get($this->config, 'import-paths', []);
-        $this->source_map = $this->process->getCwd(Arr::get($this->config, 'source-map', false));
-        $this->source_map_options = Arr::get($this->config, 'source-map-options', false);
+        $this->source_map = Arr::get($this->config, 'source-map', false);
         $this->options = Arr::get($this->config, 'options', []);
 
         // Force array.
@@ -126,7 +118,12 @@ class SassPlugin extends BasePlugin
         $this->storePath($this->dest_path);
 
         if ($this->source_map !== false) {
-            $this->storePath($this->source_map);
+            if (!$this->verifyRequiredConfig(['source-map.path'])) {
+                return;
+            }
+
+            Arr::set($this->source_map, 'path', Arr::get($this->source_map, 'path'));
+            $this->storePath(Arr::get($this->source_map, 'path'));
         }
 
         foreach ($this->import_paths as &$path) {
@@ -176,12 +173,12 @@ class SassPlugin extends BasePlugin
             $scss->setSourceMap(Compiler::SOURCE_MAP_FILE);
 
             $source_map_options = [
-                'sourceMapWriteTo' => $this->source_map,
+                'sourceMapWriteTo' => Arr::get($this->source_map, 'path'),
             ];
 
             foreach ($this->source_map_keys as $config_key => $compiler_key) {
-                if (Arr::has($this->source_map_options, $config_key)) {
-                    Arr::set($source_map_options, $compiler_key, Arr::get($this->source_map_options, $config_key));
+                if (Arr::has($this->source_map, $config_key)) {
+                    Arr::set($source_map_options, $compiler_key, Arr::get($this->source_map, $config_key));
                 }
             }
 
@@ -207,7 +204,7 @@ class SassPlugin extends BasePlugin
         }
 
         if ($this->source_map !== false && $this->isVeryVerbose()) {
-            $this->process->line(sprintf('   <fg=yellow>Created</> %s', str_replace($this->process->getCwd(), '', $this->source_map)));
+            $this->process->line(sprintf('   <fg=yellow>Created</> %s', str_replace($this->process->getCwd(), '', Arr::get($this->source_map, 'path'))));
         }
 
         return true;
