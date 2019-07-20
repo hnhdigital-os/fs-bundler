@@ -44,13 +44,13 @@ class EmptyPlugin extends BasePlugin
     private function verifyPath($path, $options)
     {
         if (!Arr::has($options, 'ignore') && $this->checkPath($path) === false) {
-            $this->process->error(sprintf('Path \'%s\' does not exist.', $path));
+            $this->process->error(sprintf('   Path \'%s\' does not exist.', $path));
 
             return;
         }
 
         if ($path === $this->process->getCwd()) {
-            $this->process->error(sprintf('Path matches current working directory.', $path));
+            $this->process->error(sprintf('   Path matches current working directory.', $path));
 
             return;
         }
@@ -91,7 +91,11 @@ class EmptyPlugin extends BasePlugin
         $paths = $this->scan($path);
 
         if ($this->isVerbose() && count($paths) > 0) {
-            $this->process->info(sprintf('  Deleting %s files...', count($paths)));
+            $this->process->line(sprintf(
+                '   Deleting %s files from <fg=cyan>%s</>',
+                count($paths),
+                str_replace($this->process->getCwd(), '', $path)
+            ));
         }
 
         foreach ($paths as $path) {
@@ -104,7 +108,10 @@ class EmptyPlugin extends BasePlugin
             }
 
             if ($this->isVeryVerbose()) {
-                $this->process->line(sprintf('  <fg=red>Deleted</> %s', str_replace($this->process->getCwd(), '', $path)));
+                $this->process->line(sprintf(
+                    '   <fg=red>Deleted</> %s',
+                    str_replace($this->process->getCwd(), '', $path)
+                ));
             }
             
             is_dir($path) ? rmdir($path) : unlink($path);

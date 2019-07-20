@@ -179,7 +179,11 @@ class CopyPlugin extends BasePlugin
                 $paths = $this->filterPaths($paths, array_get($options, 'source.filter', ''));
 
                 if ($this->isVerbose() && count($paths) > 0) {
-                    $this->process->info(sprintf('  Copying %s files...', count($paths)));
+                    $this->process->line(sprintf(
+                        '   Copying %s files from <fg=cyan>%s</>',
+                        count($paths),
+                        $source_path
+                    ));
                 }
 
                 if (substr($destination_path, -1) != '/') {
@@ -209,7 +213,11 @@ class CopyPlugin extends BasePlugin
                 $paths = $this->filterPaths($paths, array_get($options, 'source.filter', ''));
 
                 if ($this->isVerbose() && count($paths) > 0) {
-                    $this->process->info(sprintf('  Copying %s files...', count($paths)));
+                    $this->process->line(sprintf(
+                        '   Copying %s files <fg=cyan>%s</>',
+                        count($paths),
+                        $source_path
+                    ));
                 }
 
                 if (substr($destination_path, -1) != '/') {

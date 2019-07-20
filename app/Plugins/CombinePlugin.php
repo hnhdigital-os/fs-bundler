@@ -42,7 +42,7 @@ class CombinePlugin extends BasePlugin
 
             // Check that this path exists.
             if ($this->checkPath($path) === false) {
-                $this->process->line(sprintf('<error>ERROR</error> Path does not exist: %s', $path));
+                $this->process->line(sprintf('   <error>ERROR</error> Path does not exist: %s', $path));
 
                 return false;
             }
@@ -69,7 +69,7 @@ class CombinePlugin extends BasePlugin
         $this->createDirectory($this->output_path);
 
         if ($this->isVeryVerbose()) {
-            $this->process->line(sprintf(' <fg=yellow>Created</> %s', str_replace($this->process->getCwd(), '', $this->output_path)));
+            $this->process->line(sprintf('   <fg=yellow>Created</> %s', str_replace($this->process->getCwd(), '', $this->output_path)));
         }
 
         if ($this->process->isDry()) {
@@ -130,7 +130,7 @@ class CombinePlugin extends BasePlugin
         }
 
         if ($this->isVeryVerbose()) {
-            $this->process->line(sprintf(' <fg=cyan>Adding</>  %s', str_replace($this->process->getCwd(), '', $file_path)));
+            $this->process->line(sprintf('   <fg=cyan>Adding</>  %s', str_replace($this->process->getCwd(), '', $file_path)));
         }
 
         $relative_path = str_replace($this->process->getCwd(), '', $file_path);
