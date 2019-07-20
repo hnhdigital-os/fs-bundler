@@ -30,6 +30,14 @@ class SassPlugin extends BasePlugin
     private $dest_path;
 
     /**
+     * Options.
+     *
+     * @var array
+     */
+    private $options = [];
+
+
+    /**
      * Destination path.
      *
      * @var array
@@ -37,18 +45,25 @@ class SassPlugin extends BasePlugin
     private $import_paths = [];
 
     /**
-     * Options.
-     *
-     * @var array
-     */
-    private $options = [];
-
-    /**
      * Source Map.
      *
      * @var string
      */
     private $source_map;
+
+    /**
+     * Format.
+     *
+     * @var string
+     */
+    private $format;
+
+    /**
+     * Number precision.
+     *
+     * @var int
+     */
+    private $number_precision;
 
     /**
      * Source Map Keys.
@@ -76,43 +91,39 @@ class SassPlugin extends BasePlugin
         $this->src_path = $this->process->getCwd(Arr::get($this->config, 'src'));
         $this->dest_path = $this->process->getCwd(Arr::get($this->config, 'dest'));
         $this->import_paths = Arr::get($this->config, 'import-paths', []);
-        $this->source_map = Arr::get($this->config, 'source-map', false);
         $this->options = Arr::get($this->config, 'options', []);
-
-        // Force array.
-        if (is_string($this->options)) {
-            $this->options = [];
-        }
+        $this->source_map = Arr::get($this->config, 'source-map', false);
+        $this->format = Arr::get($this->config, 'format', 'nested');
+        $this->number_precision = Arr::get($this->config, 'number-precision', 5);
 
         // Check source path.
         if (!$this->verifyPaths(['src'])) {
             return;
         }
 
+        // Force array.
+        if (is_string($this->options)) {
+            $this->options = [];
+        }
+
         // Formatter option.
-        if (Arr::has($this->options, 'format')) {
-            if (!in_array(Arr::get($this->options, 'format'), $this->format_options)) {
+        if ($this->format) {
+            if (!in_array($this->format, $this->format_options)) {
                 $this->process->error(sprintf('Invalid SASS format option provided: %s', Arr::get($this->options, 'format')));
                 $this->process->line(sprintf('Format options available: %s', implode(' ', $this->format_options)));
 
                 return;
             }
-        } else {
-            Arr::set($this->options, 'format', 'nested');
         }
 
         // Number precision.
-        if (Arr::has($this->options, 'precision')) {
-            $precision = Arr::get($this->options, 'precision');
-
-            if ($precision < 1 || $precision > 10) {
-                $this->process->error(sprintf('Invalid SASS number precision provided: %s', Arr::get($this->options, 'precision')));
+        if ($this->number_precision) {
+            if ($this->number_precision < 1 || $this->number_precision > 10) {
+                $this->process->error(sprintf('Invalid SASS number precision provided: %s', $this->number_precision));
                 $this->process->line('Precision should be between 1 and 10. Default is 5.');
 
                 return;
             }
-        } else {
-            Arr::set($this->options, 'precision', 5);
         }
 
         $this->storePath($this->dest_path);
@@ -164,10 +175,10 @@ class SassPlugin extends BasePlugin
         }
 
         // Set formatter.
-        $scss->setFormatter('ScssPhp\\ScssPhp\\Formatter\\'.Str::studly(Arr::get($this->options, 'format')));
+        $scss->setFormatter('ScssPhp\\ScssPhp\\Formatter\\'.Str::studly($this->format));
 
         // Set number precision
-        $scss->setNumberPrecision(Arr::get($this->options, 'precision'));
+        $scss->setNumberPrecision($this->number_precision);
 
         if ($this->source_map !== false) {
             $scss->setSourceMap(Compiler::SOURCE_MAP_FILE);
