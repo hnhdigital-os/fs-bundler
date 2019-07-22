@@ -273,16 +273,17 @@ abstract class BasePlugin
      *
      * @return array
      */
-    public function filterPathExtensions($paths, $filter)
+    public function filterPathExtensions($paths, $extensions)
     {
-        if (!empty($filter)) {
-            $filter = explode(',', $filter);
+        if (is_string($extensions) && !empty($extensions)) {
+            $extensions = explode(',', $extensions);
         }
 
-        if (is_array($filter) && count($filter)) {
-            $paths = array_filter($paths, function ($path) use ($filter) {
+        if (is_array($extensions) && count($extensions)) {
+            $paths = array_filter($paths, function ($path) use ($extensions) {
                 $module = File::extension($path);
-                return in_array($module, $filter);
+
+                return in_array($module, $extensions);
             });
         }
 

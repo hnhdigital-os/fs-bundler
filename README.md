@@ -87,7 +87,8 @@ tasks:
     src: PATH_PUBLIC_ASSETS + /js/test.js
     find: This is some text to replace
     replace: Text has been replaced
-    extensions: js
+    extensions:
+      - js
 
   -
     name: Create autoinit
