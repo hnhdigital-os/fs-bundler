@@ -2,6 +2,7 @@
 
 namespace App\Plugins;
 
+use File;
 use Illuminate\Support\Arr;
 
 class CombinePlugin extends BasePlugin
@@ -76,7 +77,7 @@ class CombinePlugin extends BasePlugin
             return;
         }
 
-        file_put_contents($this->output_path, $contents);
+        File::put($this->output_path, $contents);
     }
 
     /**
@@ -106,7 +107,7 @@ class CombinePlugin extends BasePlugin
         if (!isset($file_paths)) {
             $method_arguments = ($method == 'base') ? [true, 1] : [];
             $file_paths = $this->scan($path, false, ...$method_arguments);
-            $file_paths = $this->filterPaths($file_paths, array_get($options, 'filter', ''));
+            $file_paths = $this->filterPathExtensions($file_paths, array_get($options, 'filter', ''));
         }
 
         foreach ($file_paths as $file_path) {
@@ -136,7 +137,7 @@ class CombinePlugin extends BasePlugin
         $relative_path = str_replace($this->process->getCwd(), '', $file_path);
 
         $content = sprintf("\n/* %s */\n\n", $relative_path);
-        $content .= file_get_contents($file_path);
+        $content .= File::get($file_path);
 
         return $content;
     }
