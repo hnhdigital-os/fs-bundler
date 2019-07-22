@@ -22,6 +22,13 @@ class CombinePlugin extends BasePlugin
     private $paths = [];
 
     /**
+     * Remove paths after combining.
+     *
+     * @var array
+     */
+    private $remove_paths = false;
+
+    /**
      * Verify the configuration.
      *
      * @return bool
@@ -33,8 +40,9 @@ class CombinePlugin extends BasePlugin
         }
 
         $this->output_path = Arr::get($this->config, 'output');
+        $this->remove_paths = $this->parseBooleanValue(Arr::get($this->config, 'remove', false));
 
-        $paths = Arr::get($this->config, 'paths', []);
+        $paths = $this->parseStringArrayValue(Arr::get($this->config, 'paths', []));
 
         foreach ($paths as $path) {
             list($path, $options) = $this->parseOptions($path);
@@ -70,7 +78,7 @@ class CombinePlugin extends BasePlugin
         $this->createDirectory($this->output_path);
 
         if ($this->isVeryVerbose()) {
-            $this->process->line(sprintf('   <fg=yellow>Created</> %s', str_replace($this->process->getCwd(), '', $this->output_path)));
+            $this->process->line(sprintf('   <fg=yellow>Created</> %s', $this->output_path));
         }
 
         if ($this->process->isDry()) {
@@ -131,13 +139,21 @@ class CombinePlugin extends BasePlugin
         }
 
         if ($this->isVeryVerbose()) {
-            $this->process->line(sprintf('   <fg=cyan>Adding</>  %s', str_replace($this->process->getCwd(), '', $file_path)));
+            $this->process->line(sprintf('   <fg=cyan>Adding</>  %s', $file_path));
         }
 
         $relative_path = str_replace($this->process->getCwd(), '', $file_path);
 
         $content = sprintf("\n/* %s */\n\n", $relative_path);
         $content .= File::get($file_path);
+
+        if (!$this->process->isDry() && $this->remove_paths) {
+            File::delete($file_path);
+
+            if ($this->isVeryVerbose()) {
+                $this->process->line(sprintf('   <fg=red>Deleted</>  %s', $file_path));
+            }
+        }
 
         return $content;
     }
