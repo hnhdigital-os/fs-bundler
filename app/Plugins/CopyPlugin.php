@@ -14,26 +14,6 @@ class CopyPlugin extends BasePlugin
     private $paths = [];
 
     /**
-     * Error understanding path.
-     */
-    const COPY_ERROR = -1;
-
-    /**
-     * Copy all files and folders.
-     */
-    const COPY_ALL = 1;
-
-    /**
-     * Copy only files in the base directory.
-     */
-    const COPY_BASE = 2;
-
-    /**
-     * Copy file.
-     */
-    const COPY_FILE = 3;
-
-    /**
      * Verify the configuration.
      *
      * @return bool
@@ -75,7 +55,7 @@ class CopyPlugin extends BasePlugin
             case self::COPY_BASE:
                 $method_arguments = ($method == self::COPY_BASE) ? [true, 1] : [];
                 $paths = $this->scan($source_path, false, ...$method_arguments);
-                $paths = $this->filterPaths($paths, array_get($options, 'source.filter', ''));
+                $paths = $this->filterPathExtensions($paths, array_get($options, 'source.extensions', ''));
 
                 if (substr($destination_path, -1) != '/') {
                     $destination_path .= '/';
@@ -112,46 +92,6 @@ class CopyPlugin extends BasePlugin
     }
 
     /**
-     * Check the path, set the options and clean the path.
-     *
-     * @param string $path
-     *
-     * @return array
-     */
-    private function parsePaths($source_path, $destination_path)
-    {
-        $options = [
-            'source'      => [],
-            'destination' => [],
-        ];
-
-        $source_options = &$options['source'];
-        $destination_options = &$options['destination'];
-
-        list($source_path, $source_options) = $this->parseOptions($source_path);
-        list($destination_path, $destination_options) = $this->parseOptions($destination_path);
-
-        if (($index = stripos($source_path, '*.')) !== false) {
-            array_set($source_options, 'filter', substr($source_path, $index + 2));
-            $source_path = substr($source_path, 0, $index + 1);
-        }
-
-        if (substr($source_path, -2) == '**') {
-            return [self::COPY_ALL, substr($source_path, 0, -2),  $destination_path, $options];
-        }
-
-        if (substr($source_path, -1) == '*' || substr($source_path, -1) == '/') {
-            return [self::COPY_BASE, substr($source_path, 0, -1),  $destination_path, $options];
-        }
-
-        if (is_file($source_path)) {
-            return [self::COPY_FILE, $source_path, $destination_path, $options];
-        }
-
-        return [self::COPY_ERROR, '', '', $options];
-    }
-
-    /**
      * Handle the task.
      *
      * @return bool
@@ -176,13 +116,14 @@ class CopyPlugin extends BasePlugin
              */
             case self::COPY_ALL:
                 $paths = $this->scan($source_path, false);
-                $paths = $this->filterPaths($paths, array_get($options, 'source.filter', ''));
+                $paths = $this->filterPathExtensions($paths, array_get($options, 'source.extensions', ''));
 
-                if ($this->isVerbose() && count($paths) > 0) {
+                if ($this->isVerbose() && !$this->isVeryVerbose() && count($paths) > 0) {
                     $this->process->line(sprintf(
-                        '   Copying %s files from <fg=cyan>%s</>',
+                        '   Copying %s files from <fg=cyan>%s</> to <fg=cyan>%s</>',
                         count($paths),
-                        $source_path
+                        $source_path,
+                        $destination_path
                     ));
                 }
 
@@ -210,13 +151,14 @@ class CopyPlugin extends BasePlugin
                     return is_file($source_path.$path);
                 });
 
-                $paths = $this->filterPaths($paths, array_get($options, 'source.filter', ''));
+                $paths = $this->filterPathExtensions($paths, array_get($options, 'source.extensions', ''));
 
-                if ($this->isVerbose() && count($paths) > 0) {
+                if ($this->isVerbose() && !$this->isVeryVerbose() && count($paths) > 0) {
                     $this->process->line(sprintf(
-                        '   Copying %s files <fg=cyan>%s</>',
+                        '   Copying %s files <fg=cyan>%s</> to <fg=cyan>%s</>',
                         count($paths),
-                        $source_path
+                        $source_path,
+                        $destination_path
                     ));
                 }
 
@@ -244,6 +186,14 @@ class CopyPlugin extends BasePlugin
                     $destination_path = $this->checkPath($destination_path);
                     $source_basename = basename($source_path);
                     $destination_path .= $source_basename;
+                }
+
+                if ($this->isVerbose() && !$this->isVeryVerbose()) {
+                    $this->process->line(sprintf(
+                        '   Copying <fg=cyan>%s</> to <fg=cyan>%s</>',
+                        $source_path,
+                        $destination_path,
+                    ));
                 }
 
                 $this->copyFile($source_path, $destination_path);
