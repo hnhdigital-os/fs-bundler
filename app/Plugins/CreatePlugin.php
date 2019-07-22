@@ -2,6 +2,7 @@
 
 namespace App\Plugins;
 
+use File;
 use Illuminate\Support\Arr;
 
 class CreatePlugin extends BasePlugin
@@ -55,16 +56,18 @@ class CreatePlugin extends BasePlugin
      */
     private function handlePath($path, $options)
     {
+        if (File::exists($path)) {
+            return;
+        }
+
+        if ($this->isVerbose()) {
+            $this->process->line(sprintf('   Created <fg=cyan>%s</>', $path));
+        }
+
         if ($this->process->isDry()) {
             return;
         }
 
-        if (file_exists($path)) {
-            return;
-        }
-
-        $this->process->line(sprintf('  %s created', $path));
-
-        mkdir($path);
+        File::makeDirectory($path);
     }
 }
