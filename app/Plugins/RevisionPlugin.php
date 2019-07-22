@@ -118,7 +118,7 @@ class RevisionPlugin extends BasePlugin
         $file_hash = $this->hashFile($file->getPathName());
 
         // Source file details
-        $relative_path = str_replace($this->src_path.'/', '', $file->getPathName());
+        $relative_path = str_replace($this->src_path.'/', '', $file->getRelativePath());
 
         // Minify file if enabled and not already minified (best guess by .min in filename)
         $minify = false;
