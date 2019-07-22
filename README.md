@@ -26,6 +26,8 @@ fs-tasker <command> [options] [arguments]
 
 ## Config (.tasker.config.yml)
 
+An example of the tasker configuration using YAML.
+
 ```yaml
 environments:
   - dev
@@ -123,13 +125,13 @@ tasks:
 
 ## Contributing
 
-Please see [CONTRIBUTING](https://github.com/hnhdigital-os/fs-watcher/blob/master/CONTRIBUTING.md) for details.
+Please see [CONTRIBUTING](https://github.com/hnhdigital-os/fs-tasker/blob/master/CONTRIBUTING.md) for details.
 
 ## Credits
 
 * [Rocco Howard](https://github.com/RoccoHoward)
-* [All Contributors](https://github.com/hnhdigital-os/fs-watcher/contributors)
+* [All Contributors](https://github.com/hnhdigital-os/fs-tasker/contributors)
 
 ## License
 
-The MIT License (MIT). Please see [License File](https://github.com/hnhdigital-os/fs-watcher/blob/master/LICENSE.md) for more information.
+The MIT License (MIT). Please see [License File](https://github.com/hnhdigital-os/fs-tasker/blob/master/LICENSE.md) for more information.
