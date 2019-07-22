@@ -4,11 +4,9 @@ namespace App\Commands;
 
 use App\Traits\HelperTrait;
 use App\Traits\TasksTrait;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use LaravelZero\Framework\Commands\Command;
 
-class RunCommand extends Command
+class DryCommand extends Command
 {
     use HelperTrait, TasksTrait;
 
@@ -17,7 +15,7 @@ class RunCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'run
+    protected $signature = 'dry
                             {--config= : Config file path}
                             {--tasks= : Run specific tasks}';
 
@@ -26,7 +24,7 @@ class RunCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Run the bundler';
+    protected $description = 'Dry run the tasks';
 
     /**
      * Execute the console command.
@@ -35,9 +33,10 @@ class RunCommand extends Command
      */
     public function handle()
     {
+        $this->dry = true;
         $this->cwd = getcwd();
 
-        $this->info('Running bundler...');
+        $this->info('Dry run of the bundler...');
         $this->line('');
 
         $this->parseConfig();
