@@ -84,6 +84,7 @@ class SassPlugin extends BasePlugin
      */
     public function verify()
     {
+        // Required config.
         if (!$this->verifyRequiredConfig(['src', 'dest'])) {
             return;
         }
@@ -126,8 +127,10 @@ class SassPlugin extends BasePlugin
             }
         }
 
+        // Store the destination path.
         $this->storePath($this->dest_path);
 
+        // Source map setup.
         if ($this->source_map !== false) {
             if (!$this->verifyRequiredConfig(['source-map.path'])) {
                 return;
@@ -137,6 +140,7 @@ class SassPlugin extends BasePlugin
             $this->storePath(Arr::get($this->source_map, 'path'));
         }
 
+        // Convert import paths to absolute paths.
         foreach ($this->import_paths as &$path) {
             $path = $this->process->getCwd($path);
             unset($path);
