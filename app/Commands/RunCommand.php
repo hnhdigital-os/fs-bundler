@@ -19,6 +19,7 @@ class RunCommand extends Command
      */
     protected $signature = 'run
                             {--config= : Config file path}
+                            {--env= : Set environment}
                             {--tasks= : Run specific tasks}';
 
     /**
@@ -40,7 +41,9 @@ class RunCommand extends Command
         $this->info('Running bundler...');
         $this->line('');
 
-        $this->parseConfig();
+        if (!$this->parseConfig()) {
+            return;
+        }
 
         $this->info('Verifying...');
 

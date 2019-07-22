@@ -68,7 +68,7 @@ trait TasksTrait
     /**
      * Parse config.
      *
-     * @return boid
+     * @return bool
      */
     private function parseConfig()
     {
@@ -79,7 +79,7 @@ trait TasksTrait
 
         // Check config path exists.
         if (!file_exists($this->config_yaml_path)) {
-            $this->error(sprintf('   Unable to find config file: %s', $this->config_yaml_path));
+            $this->error(sprintf('Unable to find config file: %s', $this->config_yaml_path));
 
             return false;
         }
@@ -88,7 +88,21 @@ trait TasksTrait
         try {
             $this->config = Yaml::parse(file_get_contents($this->config_yaml_path));
         } catch (ParseException $e) {
-            $this->error(sprintf('   Unable to parse .elixir.yml: %s', $e->getMessage()));
+            $this->error(sprintf('Unable to parse .elixir.yml: %s', $e->getMessage()));
+
+            return false;
+        }
+
+        // Config path provided.
+        if (!Arr::has($this->config, 'environments')) {
+            $this->error('No environments specified!');
+
+            return false;
+        }
+
+        // Check if the env specified is in the list of environments.
+        if ($this->option('env') && !in_array($this->option('env'), Arr::get($this->config, 'environments', []))) {
+            $this->error(sprintf('--env is one of %s', implode(', ', Arr::get($this->config, 'environments', []))));
 
             return false;
         }
@@ -108,6 +122,8 @@ trait TasksTrait
 
             $this->tasks[] = new $plugin_class($this, $config);
         }
+
+        return true;
     }
 
     /**

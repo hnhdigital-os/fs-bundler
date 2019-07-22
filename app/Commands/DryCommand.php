@@ -17,6 +17,7 @@ class DryCommand extends Command
      */
     protected $signature = 'dry
                             {--config= : Config file path}
+                            {--env= : Set environment}
                             {--tasks= : Run specific tasks}';
 
     /**
@@ -39,7 +40,9 @@ class DryCommand extends Command
         $this->info('Dry run of the bundler...');
         $this->line('');
 
-        $this->parseConfig();
+        if (!$this->parseConfig()) {
+            return;
+        }
 
         $this->info('Verifying...');
 
