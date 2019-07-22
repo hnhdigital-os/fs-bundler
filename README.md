@@ -1,6 +1,16 @@
 # FS-TASKER
 
-Provides a task runner.
+Provides a sequential task runner. Tasks and configuration is provided through a simple yaml config file.
+
+Provides task plugins for:
+* Combine
+* Copy
+* Create
+* Empty
+* Exec
+* Replace Text
+* Revision
+* SASS
 
 This package has been developed by H&H|Digital, an Australian botique developer. Visit us at [hnh.digital](http://hnh.digital).
 
