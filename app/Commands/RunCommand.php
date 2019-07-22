@@ -47,7 +47,9 @@ class RunCommand extends Command
 
         $this->info('Verifying...');
 
-        $this->verifyTasks();        
+        if (!$this->verifyTasks()) {
+            return;
+        }
 
         $this->info('Processing...');
 
