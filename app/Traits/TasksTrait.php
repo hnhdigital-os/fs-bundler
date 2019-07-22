@@ -254,6 +254,8 @@ trait TasksTrait
         if ($this->getOutput()->isVerbose()) {
             $this->line('');
         }
+
+        return true;
     }
 
     /**
