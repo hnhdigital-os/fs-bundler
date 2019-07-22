@@ -20,7 +20,17 @@ class EmptyPlugin extends BasePlugin
      */
     public function verify()
     {
+        // Required config.
+        if (!$this->verifyRequiredConfig(['paths'])) {
+            return;
+        }
+
         $this->paths = Arr::get($this->config, 'paths', []);
+
+        // Force array.
+        if (is_string($this->paths)) {
+            $this->paths = [];
+        }
 
         foreach ($this->paths as &$path) {
             $path = $this->parseOptions($this->process->getCwd($path));
@@ -84,7 +94,7 @@ class EmptyPlugin extends BasePlugin
     {
         (substr($path, -1) !== '/') ? $path .= '/' : false;
 
-        if (!file_exists($path)) {
+        if (!File::exists($path)) {
             return;
         }
 
@@ -103,7 +113,7 @@ class EmptyPlugin extends BasePlugin
                 continue;
             }
 
-            if (!file_exists($path)) {
+            if (!File::exists($path)) {
                 continue;
             }
 
