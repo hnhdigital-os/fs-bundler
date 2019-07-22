@@ -69,6 +69,12 @@ tasks:
     arguments: install
 
   -
+    name: Tailwind CSS
+    plugin: exec
+    executable: npx
+    arguments: tailwind build PATH_RESOURCES + /css/styles.css -o PATH_PUBLIC_ASSETS + /output.css
+
+  -
     name: Create folders
     plugin: create
     paths:
