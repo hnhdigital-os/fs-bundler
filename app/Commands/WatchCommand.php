@@ -19,14 +19,7 @@ class WatchCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Watch a folder for changes and run the bundler';
-
-    /**
-     * Default config file path.
-     *
-     * @var string
-     */
-    protected $config_yaml_path = '.bundler.yml';
+    protected $description = 'Watch a folder for changes and run the tasker';
 
     /**
      * Config.

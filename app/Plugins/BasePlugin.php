@@ -162,7 +162,7 @@ abstract class BasePlugin
             return [self::COPY_BASE, substr($source_path, 0, -1),  $destination_path, $options];
         }
 
-        if (is_file($source_path)) {
+        if (File::isFile($source_path)) {
             return [self::COPY_FILE, $source_path, $destination_path, $options];
         }
 
@@ -206,9 +206,9 @@ abstract class BasePlugin
      *
      * @return void
      */
-    protected function storePath(...$paths)
+    protected function storePath($path, $source_path = true)
     {
-        return $this->process->storePath($paths);
+        return $this->process->storePath($path, $source_path);
     }
 
     /**

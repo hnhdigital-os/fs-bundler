@@ -97,19 +97,13 @@ trait HelperTrait
     /**
      * Store path.
      *
-     * @param mixed $path
+     * @param string|array $path
+     * @param bool|string $source_path
      * 
      * @return void
      */
-    public function storePath($path)
+    public function storePath($path, $source_path = true)
     {
-        // Multiple path parameters.
-        if (count(func_get_args()) >= 2) {
-            $this->storePath(func_get_args());
-
-            return;
-        }
-
         // Paths is an array.
         if (is_array($path)) {
             foreach ($path as $file_path) {
@@ -119,6 +113,6 @@ trait HelperTrait
             return;
         }
 
-        $this->paths[$path] = true;
+        $this->paths[$path] = $source_path;
     }
 }

@@ -27,7 +27,7 @@ class RunCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Run the bundler';
+    protected $description = 'Run the tasker';
 
     /**
      * Execute the console command.
@@ -38,7 +38,7 @@ class RunCommand extends Command
     {
         $this->cwd = getcwd();
 
-        $this->info('Running bundler...');
+        $this->info('Running tasker...');
         $this->line('');
 
         if (!$this->parseConfig()) {

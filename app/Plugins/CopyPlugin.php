@@ -77,7 +77,7 @@ class CopyPlugin extends BasePlugin
                     $destination_path .= $source_basename;
                 }
 
-                $this->storePath($destination_path);
+                $this->storePath($destination_path, $source_path);
                 break;
             /*
              * Copying error. File may not exist.

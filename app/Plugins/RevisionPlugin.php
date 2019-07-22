@@ -71,7 +71,7 @@ class RevisionPlugin extends BasePlugin
 
         // Create the cache.
         if (Arr::get($this->options, 'cache') === true || Arr::get($this->options, 'cache') === '1') {
-            Arr::set($this->options, 'cache-path', '.bundler.cache');
+            Arr::set($this->options, 'cache-path', '.tasker.cache');
         // Create custom cache.
         } elseif (is_string(Arr::get($this->options, 'cache', ''))
             && !empty(Arr::get($this->options, 'cache', ''))) {

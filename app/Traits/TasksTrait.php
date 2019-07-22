@@ -14,7 +14,7 @@ trait TasksTrait
      *
      * @var string
      */
-    protected $config_yaml_path = '.bundler.yml';
+    protected $config_yaml_path = '.tasker.config.yml';
 
     /**
      * Current Working Directory.

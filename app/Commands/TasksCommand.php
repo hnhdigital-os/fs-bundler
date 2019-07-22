@@ -25,13 +25,6 @@ class TasksCommand extends Command
     protected $description = 'List the tasks';
 
     /**
-     * Default config file path.
-     *
-     * @var string
-     */
-    protected $config_yaml_path = '.bundler.yml';
-
-    /**
      * Tasks.
      *
      * @var array

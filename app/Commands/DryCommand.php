@@ -37,7 +37,7 @@ class DryCommand extends Command
         $this->dry = true;
         $this->cwd = getcwd();
 
-        $this->info('Dry run of the bundler...');
+        $this->info('Dry run of the tasker...');
         $this->line('');
 
         if (!$this->parseConfig()) {
