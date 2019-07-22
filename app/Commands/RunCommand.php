@@ -27,7 +27,7 @@ class RunCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Run the tasker';
+    protected $description = 'Run the tasks';
 
     /**
      * Execute the console command.
