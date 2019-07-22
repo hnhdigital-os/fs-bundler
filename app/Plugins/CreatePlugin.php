@@ -21,7 +21,7 @@ class CreatePlugin extends BasePlugin
      */
     public function verify()
     {
-        $this->paths = Arr::get($this->config, 'paths', []);
+        $this->paths = $this->parseStringArrayValue(Arr::get($this->config, 'paths', []));
 
         foreach ($this->paths as &$path) {
             $path = $this->parseOptions($this->process->getCwd($path));

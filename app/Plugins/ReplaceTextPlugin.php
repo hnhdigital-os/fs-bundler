@@ -22,8 +22,8 @@ class ReplaceTextPlugin extends BasePlugin
         $this->src_path = Arr::get($this->config, 'src');
         $this->find_text = Arr::get($this->config, 'find');
         $this->replace_text = Arr::get($this->config, 'replace', '');
-        $this->enable_preg = Arr::get($this->config, 'preg', false);
-        $this->extensions = Arr::get($this->config, 'extensions', []);
+        $this->enable_preg = $this->parseBooleanValue(Arr::get($this->config, 'preg', false));
+        $this->extensions = $this->parseStringArrayValue(Arr::get($this->config, 'extensions', []), true);
 
         // Check source path.
         if (!$this->verifyPaths(['src'])) {

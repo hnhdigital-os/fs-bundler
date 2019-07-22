@@ -26,12 +26,7 @@ class EmptyPlugin extends BasePlugin
             return;
         }
 
-        $this->paths = Arr::get($this->config, 'paths', []);
-
-        // Force array.
-        if (is_string($this->paths)) {
-            $this->paths = [];
-        }
+        $this->paths = $this->parseStringArrayValue(Arr::get($this->config, 'paths', []));
 
         foreach ($this->paths as &$path) {
             $path = $this->parseOptions($this->process->getCwd($path));

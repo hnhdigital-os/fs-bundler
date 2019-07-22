@@ -20,7 +20,7 @@ class CopyPlugin extends BasePlugin
      */
     public function verify()
     {
-        $paths = Arr::wrap(Arr::get($this->config, 'paths', []));
+        $paths = $this->parseStringArrayValue(Arr::get($this->config, 'paths', []));
 
         foreach ($paths as $source_path => $destination_path) {
             $this->verifyPath($source_path, $destination_path);

@@ -21,6 +21,13 @@ class ExecPlugin extends BasePlugin
     private $src_path;
 
     /**
+     * Paths to store.
+     *
+     * @var array
+     */
+    private $store_paths;
+
+    /**
      * Verify the configuration.
      *
      * @return bool
@@ -33,6 +40,7 @@ class ExecPlugin extends BasePlugin
 
         $executable = Arr::get($this->config, 'executable');
         $this->arguments = Arr::get($this->config, 'arguments');
+        $this->store_paths = $this->parseStringArrayValue(Arr::get($this->config, 'store-paths', []));
 
         if (is_dir($this->executable)) {
             $this->process->error(sprintf('Invalid executable: %s', $this->executable));
@@ -44,6 +52,10 @@ class ExecPlugin extends BasePlugin
             $this->process->error(sprintf('Can not find executable %s.', $executable));
 
             return false;
+        }
+
+        foreach ($this->store_paths as $path) {
+            $this->storePath($path);
         }
 
         // Check permissions to execute this file

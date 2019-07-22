@@ -91,8 +91,8 @@ class SassPlugin extends BasePlugin
 
         $this->src_path = $this->process->getCwd(Arr::get($this->config, 'src'));
         $this->dest_path = $this->process->getCwd(Arr::get($this->config, 'dest'));
-        $this->import_paths = Arr::get($this->config, 'import-paths', []);
-        $this->options = Arr::get($this->config, 'options', []);
+        $this->import_paths = $this->parseStringArrayValue(Arr::get($this->config, 'import-paths', []));
+        $this->options = $this->parseStringArrayValue(Arr::get($this->config, 'options', []));
         $this->source_map = Arr::get($this->config, 'source-map', false);
         $this->format = Arr::get($this->config, 'format', 'nested');
         $this->number_precision = Arr::get($this->config, 'number-precision', 5);
@@ -100,11 +100,6 @@ class SassPlugin extends BasePlugin
         // Check source path.
         if (!$this->verifyPaths(['src'])) {
             return;
-        }
-
-        // Force array.
-        if (is_string($this->options)) {
-            $this->options = [];
         }
 
         // Formatter option.

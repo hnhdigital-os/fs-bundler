@@ -57,8 +57,8 @@ class RevisionPlugin extends BasePlugin
         $this->dest_path = Arr::get($this->config, 'dest');
 
         $this->options = [
-            'cache'       => Arr::get($this->config, 'cache', true),
-            'minify'      => Arr::get($this->config, 'minify', true),
+            'cache'       => $this->parseBooleanValue(Arr::get($this->config, 'cache', true)),
+            'minify'      => $this->parseBooleanValue(Arr::get($this->config, 'minify', true)),
             'hash'        => Arr::get($this->config, 'hash', 'sha256'),
             'hash_length' => Arr::get($this->config, 'hash_length', 0),
         ];

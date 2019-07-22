@@ -129,6 +129,50 @@ abstract class BasePlugin
     }
 
     /**
+     * Parse a config value that can be stored as a string or array.
+     *
+     * @return array
+     */
+    public function parseStringArrayValue($data, $comma_deliminated = false)
+    {
+        if (is_array($data)) {
+            return $data;
+        }
+
+        if (is_string($data) && empty($data)) {
+            return [];
+        }
+
+        if ($comma_deliminated) {
+            return explode(',', $data);
+        }
+
+        return Arr::wrap($data);
+    }
+
+    /**
+     * Parse a config value that can be stored as a string or array.
+     *
+     * @return array
+     */
+    public function parseBooleanValue($data)
+    {
+        if (is_bool($data)) {
+            return $data;
+        }
+
+        if ($data === '1' || $data === 1) {
+            return true;
+        }
+
+        if ($data === '0' || $data === 0) {
+            return false;
+        }
+
+        return false;
+    }
+
+    /**
      * Check the path, set the options and clean the path.
      *
      * @param string $source_path
