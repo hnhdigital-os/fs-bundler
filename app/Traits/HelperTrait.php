@@ -88,7 +88,7 @@ trait HelperTrait
         if (Arr::has($this->paths, $path) || file_exists($path)) {
             return $path;
         } elseif (Arr::has($this->paths, $cwd_path) || file_exists($cwd_path)) {
-            return $base_path;
+            return $cwd_path;
         }
 
         return false;
