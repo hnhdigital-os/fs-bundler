@@ -2,6 +2,7 @@
 
 namespace App\Plugins;
 
+use File;
 use Illuminate\Support\Arr;
 
 class EmptyPlugin extends BasePlugin
@@ -94,37 +95,23 @@ class EmptyPlugin extends BasePlugin
     {
         (substr($path, -1) !== '/') ? $path .= '/' : false;
 
+        if ($this->isVerbose()) {
+            $this->process->line(sprintf(
+                '   Deleting files from <fg=cyan>%s</>',
+                $path
+            ));
+        }
+
         if (!File::exists($path)) {
             return;
         }
 
-        $paths = $this->scan($path);
+        if (File::isFile($path)) {
+            File::delete($path);
 
-        if ($this->isVerbose() && count($paths) > 0) {
-            $this->process->line(sprintf(
-                '   Deleting %s files from <fg=cyan>%s</>',
-                count($paths),
-                str_replace($this->process->getCwd(), '', $path)
-            ));
+            return;
         }
 
-        foreach ($paths as $path) {
-            if ($this->process->isDry()) {
-                continue;
-            }
-
-            if (!File::exists($path)) {
-                continue;
-            }
-
-            if ($this->isVeryVerbose()) {
-                $this->process->line(sprintf(
-                    '   <fg=red>Deleted</> %s',
-                    str_replace($this->process->getCwd(), '', $path)
-                ));
-            }
-            
-            is_dir($path) ? rmdir($path) : unlink($path);
-        }
+        File::cleanDirectory($path);
     }
 }
