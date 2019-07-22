@@ -9,6 +9,8 @@ abstract class BasePlugin
 {
     protected $process;
 
+    protected $environments;
+
     protected $config;
 
     /**
@@ -40,6 +42,36 @@ abstract class BasePlugin
     {
         $this->process = $process;
         $this->config = $config;
+
+        $this->environments = Arr::get($this->config, 'environments', []);
+
+        if (is_string($this->environments)) {
+            $this->environments = [];
+        }
+
+        if (count($this->environments) === 0 || !Arr::has($this->config, 'environments')) {
+            $this->environments = $this->process->getEnvironments();
+        }
+    }
+
+    /**
+     * Check if environment matches.
+     *
+     * @return bool
+     */
+    public function checkEnvironment()
+    {
+        return in_array($this->process->getCurrentEnvironment(), $this->environments);
+    }
+
+    /**
+     * Return environments that run this task.
+     *
+     * @return array
+     */
+    public function getEnvironments()
+    {
+        return $this->environments;
     }
 
     /**

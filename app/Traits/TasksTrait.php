@@ -24,11 +24,25 @@ trait TasksTrait
     protected $cwd;
 
     /**
+     * Current environment.
+     *
+     * @var string
+     */
+    protected $env;
+
+    /**
      * Config.
      *
      * @var array
      */
     protected $config = [];
+
+    /**
+     * Config.
+     *
+     * @var array
+     */
+    protected $environments = [];
 
     /**
      * Config.
@@ -100,12 +114,23 @@ trait TasksTrait
             return false;
         }
 
+        $this->environments = Arr::get($this->config, 'environments', []);
+
         // Check if the env specified is in the list of environments.
-        if ($this->option('env') && !in_array($this->option('env'), Arr::get($this->config, 'environments', []))) {
-            $this->error(sprintf('--env is one of %s', implode(', ', Arr::get($this->config, 'environments', []))));
+        if ($this->option('env') && !in_array($this->option('env'), $this->environments)) {
+            $this->error(sprintf('--env is one of %s', implode(', ', $this->environments)));
 
             return false;
         }
+
+        if ($this->option('env')) {
+            $this->env = $this->option('env');
+        } else {
+            $this->env = Arr::get($this->environments, '0');
+        }
+
+        $this->line(sprintf('Bundler is running in <info>%s</info>', $this->env));
+        $this->line('');
 
         // Options.
         $this->options = Arr::get($this->config, 'options', []);
@@ -124,6 +149,26 @@ trait TasksTrait
         }
 
         return true;
+    }
+
+    /**
+     * Get environments.
+     *
+     * @return array
+     */
+    public function getEnvironments()
+    {
+        return $this->environments;
+    }
+
+    /**
+     * Get current environment.
+     *
+     * @return array
+     */
+    public function getCurrentEnvironment()
+    {
+        return $this->env;
     }
 
     /**
@@ -184,6 +229,16 @@ trait TasksTrait
         }
 
         foreach ($this->tasks as $task) {
+
+            // Skip task if current environment not applicable for this environment.
+            if (!$task->checkEnvironment()) {
+                if ($this->getOutput()->isVerbose()) {
+                    $this->line(sprintf('#%s <info>%s</info> <error>skipped</error>', $task->getId(), $task->getName()));
+                }
+
+                continue;
+            }
+
             if ($this->getOutput()->isVerbose()) {
                 $this->line(sprintf('#%s <info>%s</info>', $task->getId(), $task->getName()));
             }
@@ -244,6 +299,15 @@ trait TasksTrait
      */
     private function handleTask($task)
     {
+        // Skip task if current environment not applicable for this environment.
+        if (!$task->checkEnvironment()) {
+            if ($this->getOutput()->isVerbose()) {
+                $this->line(sprintf('#%s <info>%s</info> <error>skipped</error>', $task->getId(), $task->getName()));
+            }
+
+            return;
+        }
+
         if ($this->getOutput()->isVerbose()) {
             $this->line(sprintf('#%s <info>%s</info>', $task->getId(), $task->getName()));
         }
