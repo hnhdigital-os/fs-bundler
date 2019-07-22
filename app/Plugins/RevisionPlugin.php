@@ -2,6 +2,7 @@
 
 namespace App\Plugins;
 
+use File;
 use Illuminate\Support\Arr;
 
 class RevisionPlugin extends BasePlugin
@@ -52,8 +53,8 @@ class RevisionPlugin extends BasePlugin
             return;
         }
 
-        $this->src_path = $this->process->getCwd(Arr::get($this->config, 'src'));
-        $this->dest_path = $this->process->getCwd(Arr::get($this->config, 'dest'));
+        $this->src_path = Arr::get($this->config, 'src');
+        $this->dest_path = Arr::get($this->config, 'dest');
 
         $this->options = [
             'cache'       => Arr::get($this->config, 'cache', true),
@@ -70,7 +71,7 @@ class RevisionPlugin extends BasePlugin
 
         // Create the cache.
         if (Arr::get($this->options, 'cache') === true || Arr::get($this->options, 'cache') === '1') {
-            Arr::set($this->options, 'cache-path', $this->process->getCwd('.bundler.cache'));
+            Arr::set($this->options, 'cache-path', '.bundler.cache');
         // Create custom cache.
         } elseif (is_string(Arr::get($this->options, 'cache', ''))
             && !empty(Arr::get($this->options, 'cache', ''))) {
@@ -88,26 +89,64 @@ class RevisionPlugin extends BasePlugin
      */
     public function handle()
     {
-        $paths = $this->scan($this->src_path, false);
+        $paths = File::allFiles($this->src_path);
 
         $manifest = [];
 
-        foreach ($paths as $source_path) {
-            $this->handlePath($source_path);
-        }
-
-        if ($this->process->isDry()) {
-            return;
+        foreach ($paths as $path) {
+            $this->handleFile($path);
         }
 
         if (in_array('json', Arr::get($this->manifest, 'formats'))) {
             $this->generateJsonManifest();
         }
 
-
         if (in_array('php', Arr::get($this->manifest, 'formats'))) {
             $this->generatePhpManifest();
         }
+    }
+
+    /**
+     * Handle each of the files.
+     *
+     * @param SplFileInfo $file
+     *
+     * @return void
+     */
+    private function handleFile($file)
+    {
+        $file_hash = $this->hashFile($file->getPathName());
+
+        // Source file details
+        $relative_path = str_replace($this->src_path.'/', '', $file->getPathName());
+
+        // Minify file if enabled and not already minified (best guess by .min in filename)
+        $minify = false;
+        $minify_ext = '';
+
+        if (Arr::get($this->options, 'minify', false)
+            && in_array($file->getExtension(), ['css', 'js'])
+            && stripos($file->getPathName(), '.min') === false) {
+            $minify = true;
+            $minify_ext = 'min.';
+        }
+
+        // Hashed and minified new file name.
+        $destination_path = sprintf('%s/%s/', $this->dest_path, $relative_path);
+        $destination_path .= sprintf('%s.%s.%s%s', $file->getBaseName(), $file_hash, $minify_ext, $file->getExtension());
+
+        // Process minification to destination.
+        if ($minify) {
+            $this->minifyFile($file->getPathName(), $destination_path, $relative_path);
+        } else if (!$minify) {
+            $this->copyFile($file->getPathName(), $destination_path);
+        }
+
+        // Make file paths relative.
+        $manifest_source = str_replace($this->src_path.'/', '', $file->getPathName());
+        $manifest_rev = str_replace($this->dest_path.'/', '', $destination_path);
+
+        $this->manifest_paths[$manifest_source] = $manifest_rev;
     }
 
     /**
@@ -117,8 +156,21 @@ class RevisionPlugin extends BasePlugin
      */
     private function generateJsonManifest()
     {
+
+        if ($this->isVerbose()) {
+            $this->process->line(sprintf(
+                '   Generated <fg=cyan>%s</>',
+                Arr::get($this->manifest, 'path').'.js',
+            ));
+        }
+
+        if ($this->process->isDry()) {
+            return;
+        }
+
         $json_manifest = json_encode($this->manifest_paths, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
-        file_put_contents(Arr::get($this->manifest, 'path').'.js', $json_manifest);
+
+        File::put(Arr::get($this->manifest, 'path').'.js', $json_manifest);
     }
 
     /**
@@ -128,6 +180,17 @@ class RevisionPlugin extends BasePlugin
      */
     private function generatePhpManifest()
     {
+        if ($this->isVerbose()) {
+            $this->process->line(sprintf(
+                '   Generated <fg=cyan>%s</>',
+                Arr::get($this->manifest, 'path').'.php',
+            ));
+        }
+
+        if ($this->process->isDry()) {
+            return;
+        }
+
         $contents = "<?php\n\n";
         $contents .= "return [\n";
 
@@ -137,51 +200,11 @@ class RevisionPlugin extends BasePlugin
 
         $contents .= "];\n";
 
-        file_put_contents(Arr::get($this->manifest, 'path').'.php', $contents);
-    }
-
-    /**
-     * Handle each of the files.
-     *
-     * @param string $source_path
-     *
-     * @return void
-     */
-    private function handlePath($source_path)
-    {
-        $file_hash = $this->hashFile($source_path);
-
-        // Source file details
-        $path_info = pathinfo($source_path);
-        $relative_path = str_replace($this->src_path.'/', '', $path_info['dirname']);
-
-        // Minify file if enabled and not already minified (best guess by .min in filename)
-        $minify = false;
-        $minify_ext = '';
-
-        if (Arr::get($this->options, 'minify', false)
-            && in_array($path_info['extension'], ['css', 'js'])
-            && stripos($source_path, '.min') === false) {
-            $minify = true;
-            $minify_ext = 'min.';
+        if ($this->process->isDry()) {
+            return;
         }
 
-        // Hashed and minified new file name.
-        $destination_path = sprintf('%s/%s/', $this->dest_path, $relative_path);
-        $destination_path .= sprintf('%s.%s.%s%s', $path_info['filename'], $file_hash, $minify_ext, $path_info['extension']);
-
-        // Process minification to destination.
-        if ($minify) {
-            $this->minifyFile($source_path, $destination_path, $relative_path);
-        } else if (!$minify) {
-            $this->copyFile($source_path, $destination_path);
-        }
-
-        // Make file paths relative.
-        $manifest_source = str_replace($this->src_path.'/', '', $source_path);
-        $manifest_rev = str_replace($this->dest_path.'/', '', $destination_path);
-
-        $this->manifest_paths[$manifest_source] = $manifest_rev;
+        File::put(Arr::get($this->manifest, 'path').'.php', $contents);
     }
 
     /**
@@ -208,7 +231,7 @@ class RevisionPlugin extends BasePlugin
 
         // Minify cache.
         $minify_file_hash = hash('sha384', $source_path);
-        $minify_contents_hash = hash_file('sha384', $source_path);
+        $minify_contents_hash = hash('sha384', File::get($source_path));
         $minify_previous_path = Arr::get($this->options, 'cache-path').'/'.$minify_file_hash.'.'.$minify_contents_hash;
 
         if (!file_exists($minify_previous_path)) {
@@ -218,12 +241,12 @@ class RevisionPlugin extends BasePlugin
         $this->copyFile($minify_previous_path, $destination_path);
 
         // Remove previous copies.
-        foreach (glob(Arr::get($this->options, 'cache-path').'/'.$minify_file_hash.'.*') as $file_path) {
+        foreach (File::glob(Arr::get($this->options, 'cache-path').'/'.$minify_file_hash.'.*') as $file_path) {
             if ($minify_previous_path === $file_path) {
                 continue;
             }
 
-            unlink($file_path);
+            File::delete($file_path);
         }
     }
 
@@ -252,9 +275,9 @@ class RevisionPlugin extends BasePlugin
     {
         // Generate hash of file.
         if (Arr::get($this->options, 'hash') === 'mtime') {
-            $file_hash = filemtime($path);
+            $file_hash = File::lastModified($path);
         } else {
-            $file_hash = hash_file(Arr::get($this->options, 'hash'), $path);
+            $file_hash = hash(Arr::get($this->options, 'hash'), File::get($path));
         }
 
         if (Arr::get($this->options, 'hash_length', 0) > 0) {
