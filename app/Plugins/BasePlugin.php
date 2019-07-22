@@ -2,6 +2,7 @@
 
 namespace App\Plugins;
 
+use File;
 use Illuminate\Support\Arr;
 
 abstract class BasePlugin
@@ -9,6 +10,26 @@ abstract class BasePlugin
     protected $process;
 
     protected $config;
+
+    /**
+     * Error understanding path.
+     */
+    const COPY_ERROR = -1;
+
+    /**
+     * Copy all files and folders.
+     */
+    const COPY_ALL = 1;
+
+    /**
+     * Copy only files in the base directory.
+     */
+    const COPY_BASE = 2;
+
+    /**
+     * Copy file.
+     */
+    const COPY_FILE = 3;
 
     /**
      * Create task.
@@ -73,6 +94,47 @@ abstract class BasePlugin
         }
 
         return true;
+    }
+
+    /**
+     * Check the path, set the options and clean the path.
+     *
+     * @param string $source_path
+     * @param string $destination_path
+     *
+     * @return array
+     */
+    public function parsePaths($source_path, $destination_path = '')
+    {
+        $options = [
+            'source'      => [],
+            'destination' => [],
+        ];
+
+        $source_options = &$options['source'];
+        $destination_options = &$options['destination'];
+
+        list($source_path, $source_options) = $this->parseOptions($source_path);
+        list($destination_path, $destination_options) = $this->parseOptions($destination_path);
+
+        if (($index = stripos($source_path, '*.')) !== false) {
+            array_set($source_options, 'filter', substr($source_path, $index + 2));
+            $source_path = substr($source_path, 0, $index + 1);
+        }
+
+        if (substr($source_path, -2) === '**') {
+            return [self::COPY_ALL, substr($source_path, 0, -2),  $destination_path, $options];
+        }
+
+        if (substr($source_path, -1) === '*' || substr($source_path, -1) == '/') {
+            return [self::COPY_BASE, substr($source_path, 0, -1),  $destination_path, $options];
+        }
+
+        if (is_file($source_path)) {
+            return [self::COPY_FILE, $source_path, $destination_path, $options];
+        }
+
+        return [self::COPY_ERROR, '', '', $options];
     }
 
     /**
@@ -155,7 +217,7 @@ abstract class BasePlugin
 
                 $absolute_path = $scan_path.$value;
 
-                if (is_dir($absolute_path) && $depth != 0) {
+                if (is_dir($absolute_path) && $depth !== 0) {
                     $new_paths = self::scan($absolute_path.'/', $include_folders, $include_files, $depth - 1);
                     $paths = array_merge($paths, $new_paths);
                 }
@@ -175,11 +237,11 @@ abstract class BasePlugin
     }
 
     /**
-     * Filter array of paths.
+     * Filter paths by extension.
      *
      * @return array
      */
-    public function filterPaths($paths, $filter)
+    public function filterPathExtensions($paths, $filter)
     {
         if (!empty($filter)) {
             $filter = explode(',', $filter);
@@ -187,7 +249,7 @@ abstract class BasePlugin
 
         if (is_array($filter) && count($filter)) {
             $paths = array_filter($paths, function ($path) use ($filter) {
-                $module = pathinfo($path, PATHINFO_EXTENSION);
+                $module = File::extension($path);
                 return in_array($module, $filter);
             });
         }
@@ -211,17 +273,17 @@ abstract class BasePlugin
 
         $path = $is_directory ? $path : dirname($path);
 
-        if (file_exists($path)) {
+        if (File::exists($path)) {
             return;
         }
 
         $parent_path = $path;
 
-        while (!file_exists($parent_path)) {
+        while (!File::exists($parent_path)) {
             $parent_path = dirname($parent_path);
         }
 
-        mkdir($path, fileperms($parent_path), true);
+        File::makeDirectory($path, octdec(File::chmod($parent_path)), true);
     }
 
     /**
@@ -235,8 +297,8 @@ abstract class BasePlugin
     public function copyFile($source_path, $destination_path)
     {
         if ($this->isVeryVerbose()) {
-            $this->process->line(sprintf('  <fg=cyan>From</> %s', str_replace($this->process->getCwd(), '', $source_path)));
-            $this->process->line(sprintf('  <fg=yellow>To</>   %s', str_replace($this->process->getCwd(), '', $destination_path)));
+            $this->process->line(sprintf('   <fg=cyan>From</> %s', str_replace($this->process->getCwd(), '', $source_path)));
+            $this->process->line(sprintf('   <fg=yellow>To</>   %s', str_replace($this->process->getCwd(), '', $destination_path)));
         }
 
         if ($this->process->isDry()) {
@@ -245,7 +307,7 @@ abstract class BasePlugin
 
         $this->createDirectory($destination_path);
 
-        copy($source_path, $destination_path);
+        File::copy($source_path, $destination_path);
     }
 
     /**
