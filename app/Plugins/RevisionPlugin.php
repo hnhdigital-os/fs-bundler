@@ -49,7 +49,7 @@ class RevisionPlugin extends BasePlugin
      */
     public function verify()
     {
-        if (!$this->verifyRequiredConfig(['src', 'dest', 'manifest', 'manifest.path'])) {
+        if (!$this->verifyRequiredConfig(['src', 'dest', 'manifest', 'manifest.formats'])) {
             return;
         }
 
@@ -97,11 +97,11 @@ class RevisionPlugin extends BasePlugin
             $this->handleFile($path);
         }
 
-        if (in_array('json', Arr::get($this->manifest, 'formats'))) {
+        if (Arr::has($this->manifest, 'formats.json')) {
             $this->generateJsonManifest();
         }
 
-        if (in_array('php', Arr::get($this->manifest, 'formats'))) {
+        if (Arr::has($this->manifest, 'formats.php')) {
             $this->generatePhpManifest();
         }
     }
@@ -160,7 +160,7 @@ class RevisionPlugin extends BasePlugin
         if ($this->isVerbose()) {
             $this->process->line(sprintf(
                 '   Generated <fg=cyan>%s</>',
-                Arr::get($this->manifest, 'path').'.js',
+                Arr::get($this->manifest, 'formats.json'),
             ));
         }
 
@@ -170,7 +170,7 @@ class RevisionPlugin extends BasePlugin
 
         $json_manifest = json_encode($this->manifest_paths, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
 
-        File::put(Arr::get($this->manifest, 'path').'.js', $json_manifest);
+        File::put(Arr::get($this->manifest, 'formats.json'), $json_manifest);
     }
 
     /**
@@ -183,7 +183,7 @@ class RevisionPlugin extends BasePlugin
         if ($this->isVerbose()) {
             $this->process->line(sprintf(
                 '   Generated <fg=cyan>%s</>',
-                Arr::get($this->manifest, 'path').'.php',
+                Arr::get($this->manifest, 'formats.php'),
             ));
         }
 
@@ -204,7 +204,7 @@ class RevisionPlugin extends BasePlugin
             return;
         }
 
-        File::put(Arr::get($this->manifest, 'path').'.php', $contents);
+        File::put(Arr::get($this->manifest, 'formats.php'), $contents);
     }
 
     /**

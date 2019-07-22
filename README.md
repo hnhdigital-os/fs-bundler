@@ -131,11 +131,10 @@ tasks:
     minify: true
     src: PATH_PUBLIC_ASSETS
     dest: PATH_PUBLIC_BUILD
-    manifest: 
-      path: PATH_PUBLIC_BUILD + /rev-manifest
+    manifest:
       formats:
-        - json
-        - php
+        json: PATH_PUBLIC_BUILD + /rev-manifest.js
+        php: config/rev-manifest.php
 
 
 ```
