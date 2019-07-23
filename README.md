@@ -1,5 +1,7 @@
 # FS-TASKER
 
+Note: Currently WIP! 
+
 Provides a sequential task runner. Tasks and configuration is provided through a simple yaml config file.
 
 Provides task plugins for:
