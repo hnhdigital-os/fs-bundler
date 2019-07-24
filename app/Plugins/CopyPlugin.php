@@ -83,7 +83,7 @@ class CopyPlugin extends BasePlugin
              * Copying error. File may not exist.
              */
             case self::COPY_ERROR:
-                $this->process->error(sprintf('%s not found.', $original_source_path));
+                $this->process->error(sprintf('%s not found.', $source_path));
 
                 return false;
         }
