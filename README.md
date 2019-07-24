@@ -30,6 +30,9 @@ Download the latest build:
 
 `curl -o ./fs-tasker -LSs https://github.com/hnhdigital-os/fs-tasker/raw/master/builds/fs-tasker`
 
+Move it local bin:
+
+`mv ./fs-tasker /usr/local/bin/fs-tasker`
 
 ## Updating
 
