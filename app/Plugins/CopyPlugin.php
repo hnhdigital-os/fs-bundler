@@ -192,7 +192,7 @@ class CopyPlugin extends BasePlugin
                     $this->process->line(sprintf(
                         '   Copying <fg=cyan>%s</> to <fg=cyan>%s</>',
                         $source_path,
-                        $destination_path,
+                        $destination_path
                     ));
                 }
 
