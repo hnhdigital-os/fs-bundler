@@ -54,6 +54,7 @@ class CopyPlugin extends BasePlugin
             case self::COPY_ALL:
             case self::COPY_BASE:
                 $method_arguments = ($method == self::COPY_BASE) ? [true, 1] : [];
+
                 $paths = $this->scan($source_path, false, ...$method_arguments);
                 $paths = $this->filterPathExtensions($paths, array_get($options, 'source.extensions', ''));
 
@@ -72,7 +73,7 @@ class CopyPlugin extends BasePlugin
              */
             case self::COPY_FILE:
                 if (substr($destination_path, -1) == '/') {
-                    $destination_path = $this->checkPath($destination_path, !Elixir::dryRun());
+                    $destination_path = $this->checkPath($destination_path);
                     $source_basename = basename($source_path);
                     $destination_path .= $source_basename;
                 }
@@ -136,7 +137,10 @@ class CopyPlugin extends BasePlugin
 
                     if (array_has($options, 'destination.remove_extension_folder')) {
                         $pathinfo = pathinfo($new_path);
-                        $new_path = preg_replace('/\b'.$pathinfo['extension'].'$/', '', $pathinfo['dirname']).$pathinfo['basename'];
+
+                        if (Arr::has($pathinfo, 'extension')) {
+                            $new_path = preg_replace('/\b'.$pathinfo['extension'].'$/', '', $pathinfo['dirname']).$pathinfo['basename'];
+                        }
                     }
 
                     $this->copyFile($path, $new_path);
