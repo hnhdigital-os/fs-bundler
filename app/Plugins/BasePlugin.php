@@ -283,6 +283,11 @@ abstract class BasePlugin
             $scan_path .= '/';
         }
 
+        // Path does not exist.
+        if (!File::exists($scan_path)) {
+            return [];
+        }
+
         try {
             $contents = scandir($scan_path);
 
@@ -306,7 +311,7 @@ abstract class BasePlugin
         } catch (\Exception $exception) {
             $this->process->error(sprintf('Path %s %s.', $scan_path, $exception->getMessage()));
 
-            exit(1);
+            return [];
         }
 
         return $paths;
@@ -383,6 +388,10 @@ abstract class BasePlugin
         }
 
         $this->createDirectory($destination_path);
+
+        if (!File::isFile($source_path)) {
+            return;
+        }
 
         File::copy($source_path, $destination_path);
     }
