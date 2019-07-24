@@ -22,7 +22,14 @@ This package has been developed by H&H|Digital, an Australian botique developer.
 
 ## Installation
 
+Via commmand line:
+
 `bash <(curl -s https://hnhdigital-os.github.io/fs-tasker/builds/install)`
+
+Download the latest build:
+
+`curl -o ./fs-tasker -LSs https://github.com/hnhdigital-os/fs-tasker/raw/master/builds/fs-tasker`
+
 
 ## Updating
 
