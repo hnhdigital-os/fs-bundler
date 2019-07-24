@@ -160,7 +160,7 @@ class RevisionPlugin extends BasePlugin
         if ($this->isVerbose()) {
             $this->process->line(sprintf(
                 '   Generated <fg=cyan>%s</>',
-                Arr::get($this->manifest, 'formats.json'),
+                Arr::get($this->manifest, 'formats.json')
             ));
         }
 
@@ -183,7 +183,7 @@ class RevisionPlugin extends BasePlugin
         if ($this->isVerbose()) {
             $this->process->line(sprintf(
                 '   Generated <fg=cyan>%s</>',
-                Arr::get($this->manifest, 'formats.php'),
+                Arr::get($this->manifest, 'formats.php')
             ));
         }
 
