@@ -22,7 +22,7 @@ This package has been developed by H&H|Digital, an Australian botique developer.
 
 ## Installation
 
-`bash <(curl -s https://hnhdigital-os.github.io/fs-tasker/install)`
+`bash <(curl -s https://hnhdigital-os.github.io/fs-tasker/builds/install)`
 
 ## Updating
 

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+curl -o ./fs-tasker -LSs https://github.com/hnhdigital-os/fs-tasker/raw/master/builds/fs-tasker
+chmod 755 ./fs-tasker
