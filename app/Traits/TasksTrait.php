@@ -129,7 +129,7 @@ trait TasksTrait
             $this->env = Arr::get($this->environments, '0');
         }
 
-        $this->line(sprintf('Bundler is running in <info>%s</info>', $this->env));
+        $this->line(sprintf('Running <info>%s</info> mode', $this->env));
         $this->line('');
 
         // Options.
