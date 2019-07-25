@@ -107,7 +107,11 @@ tasks:
       PATH_NODE + /jquery/dist/jquery.js: PATH_PUBLIC_ASSETS + /vendor/jquery.js
       PATH_NODE + /components-jqueryui/jquery-ui.js: PATH_PUBLIC_ASSETS + /vendor/jquery-ui.js
       PATH_NODE + /components-jqueryui/themes/smoothness/**: PATH_PUBLIC_ASSETS + /vendor/jquery-ui/themes/smoothness/
+      PATH_NODE + /font-awesome/css/all.css: PATH_PUBLIC_ASSETS + /vendor/fontawesome.css
+      PATH_NODE + /font-awesome/webfonts/**: PATH_PUBLIC_ASSETS + /webfonts/
       PATH_RESOURCES + /js/test.js: PATH_PUBLIC_ASSETS + /js/test.js
+      PATH_RES_ASSET_IMAGES+/**?extensions=png,gif: PATH_PUBLIC_ASSETS+/images/
+      PATH_RES_VIEWS + /**?extensions=css,js: PATH_PUBLIC_ASSETS?remove_extension_folder
 
   -
     name: Replace text
