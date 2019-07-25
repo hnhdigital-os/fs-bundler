@@ -44,6 +44,8 @@ class CombinePlugin extends BasePlugin
 
         $paths = $this->parseStringArrayValue(Arr::get($this->config, 'paths', []));
 
+        $this->storePath($this->output_path);
+
         foreach ($paths as $path) {
             list($path, $options) = $this->parseOptions($path);
 
