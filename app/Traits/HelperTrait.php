@@ -81,7 +81,7 @@ trait HelperTrait
     {
         list($path, $options) = $this->parseOptions(trim($original_path));
 
-        $path = $this->stripSearchDepth($path);
+        $path = str_replace($this->getCwd(), '', $this->stripSearchDepth($path));
 
         $cwd_path = str_replace('//', '/', $this->getCwd($path));
 
