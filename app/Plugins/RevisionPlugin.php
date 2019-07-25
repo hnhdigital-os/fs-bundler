@@ -133,7 +133,7 @@ class RevisionPlugin extends BasePlugin
 
         // Hashed and minified new file name.
         $destination_path = sprintf('%s/%s/', $this->dest_path, $relative_path);
-        $destination_path .= sprintf('%s.%s.%s%s', $file->getBaseName(), $file_hash, $minify_ext, $file->getExtension());
+        $destination_path .= sprintf('%s.%s.%s%s', $file->getBaseName('.'.$file->getExtension()), $file_hash, $minify_ext, $file->getExtension());
 
         // Process minification to destination.
         if ($minify) {
@@ -145,6 +145,10 @@ class RevisionPlugin extends BasePlugin
         // Make file paths relative.
         $manifest_source = str_replace($this->src_path.'/', '', $file->getPathName());
         $manifest_rev = str_replace($this->dest_path.'/', '', $destination_path);
+
+        if (substr($manifest_rev, 0, 1) === '/') {
+            $manifest_rev = substr($manifest_rev, 1);
+        }
 
         $this->manifest_paths[$manifest_source] = $manifest_rev;
     }
