@@ -149,7 +149,7 @@ tasks:
     dest: PATH_PUBLIC_BUILD
     manifest:
       formats:
-        json: PATH_PUBLIC_BUILD + /rev-manifest.js
+        json: PATH_PUBLIC_BUILD + /rev-manifest.json
         php: config/rev-manifest.php
 
 
