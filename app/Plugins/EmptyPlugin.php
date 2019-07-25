@@ -88,13 +88,19 @@ class EmptyPlugin extends BasePlugin
      */
     private function handlePath($path, $options)
     {
-        (substr($path, -1) !== '/') ? $path .= '/' : false;
 
         if ($this->isVerbose()) {
-            $this->process->line(sprintf(
-                '   Deleting files from <fg=cyan>%s</>',
-                $path
-            ));
+            if (File::isFile($path)) {
+                $this->process->line(sprintf(
+                    '   Deleting <fg=cyan>%s</>',
+                    $path
+                ));
+            } else {
+                $this->process->line(sprintf(
+                    '   Deleting files from <fg=cyan>%s</>',
+                    $path
+                ));
+            }
         }
 
         if (!File::exists($path)) {
