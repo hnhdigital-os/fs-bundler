@@ -52,11 +52,11 @@ trait TasksTrait
     protected $options = [];
 
     /**
-     * Path constants.
+     * Aliases.
      *
      * @var array
      */
-    protected $path_constants = [];
+    protected $aliases = [];
 
     /**
      * Tasks config.
@@ -136,10 +136,10 @@ trait TasksTrait
         $this->options = Arr::get($this->config, 'options', []);
 
         // Path constants.
-        $this->path_constants = Arr::get($this->config, 'paths', []);
+        $this->aliases = Arr::get($this->config, 'aliases', []);
 
         // Tasks.
-        $this->task_config = $this->parsePathConstants(Arr::get($this->config, 'tasks', []));
+        $this->task_config = $this->parseAliases(Arr::get($this->config, 'tasks', []));
 
         foreach ($this->task_config as $task_id => $config) {
             $plugin_class = $this->getPluginClass($config['plugin']);
@@ -184,29 +184,36 @@ trait TasksTrait
     }
 
     /**
-     * Parse constant paths over the task config.
+     * Parse aliases over all the config.
      *
      * @param mixed $value
      *
      * @return mixed
      */
-    private function parsePathConstants($value)
+    private function parseAliases($value)
     {
         if (!is_array($value)) {
-            $value = str_replace(array_keys($this->path_constants), array_values($this->path_constants), $value);
+            $alias_keys = array_keys($this->aliases);
+
+            foreach ($alias_keys as &$key) {
+                $key = '$'.$key;
+                unset($key);
+            }
+
+            $value = str_replace($alias_keys, array_values($this->aliases), $value);
             $value = str_replace([' + ', '+', '"', "'"], '', $value);
 
             return $value;
         }
 
         foreach ($value as $key => &$sub_value) {
-            $sub_value = $this->parsePathConstants($sub_value);
+            $sub_value = $this->parseAliases($sub_value);
 
             if (!is_string($key)) {
                 continue;
             }
 
-            $new_key = $this->parsePathConstants($key);
+            $new_key = $this->parseAliases($key);
 
             if ($new_key !== $key) {
                 unset($value[$key]);

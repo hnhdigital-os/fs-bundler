@@ -29,6 +29,7 @@ Via commmand line:
 Download the latest build:
 
 `curl -o ./fs-tasker -LSs https://github.com/hnhdigital-os/fs-tasker/raw/master/builds/fs-tasker`
+`chmod 755 ./fs-tasker`
 
 Move it local bin:
 
@@ -58,16 +59,16 @@ environments:
 
 options:
 
-paths:
-  PATH_SASS: resources/assets/sass
-  PATH_NODE: node_modules
-  PATH_PUBLIC_ASSETS: public/assets
-  PATH_PUBLIC_BUILD: public/build
-  PATH_VENDOR: vendor
-  PATH_RESOURCES: resources
-  PATH_RES_VIEWS: resources/views
-  PATH_RES_ASSET_IMAGES: resources/assets/images
-  PATH_RES_ASSET_VENDOR: resources/assets/vendor
+aliases:
+  SASS: resources/assets/sass
+  NODE: node_modules
+  ASSETS: public/assets
+  BUILD: public/build
+  VENDOR: vendor
+  RESOURCES: resources
+  VIEWS: resources/views
+  IMAGES: resources/assets/images
+  VENDOR_ASSETS: resources/assets/vendor
 
 tasks:
 
@@ -84,39 +85,39 @@ tasks:
     name: Tailwind CSS
     plugin: exec
     executable: npx
-    arguments: tailwind build PATH_RESOURCES + /css/styles.css -o PATH_PUBLIC_ASSETS + /output.css
+    arguments: tailwind build $RESOURCES + /css/styles.css -o $ASSETS + /output.css
 
   -
     name: Create folders
     plugin: create
     paths:
-      - PATH_PUBLIC_ASSETS?ignore
-      - PATH_PUBLIC_BUILD?ignore
+      - $ASSETS?ignore
+      - $BUILD?ignore
 
   -
     name: Empty folders
     plugin: empty
     paths:
-      - PATH_PUBLIC_ASSETS?ignore
-      - PATH_PUBLIC_BUILD?ignore
+      - $ASSETS?ignore
+      - $BUILD?ignore
 
   - 
     name: Copy assets
     plugin: copy
     paths:
-      PATH_NODE + /jquery/dist/jquery.js: PATH_PUBLIC_ASSETS + /vendor/jquery.js
-      PATH_NODE + /components-jqueryui/jquery-ui.js: PATH_PUBLIC_ASSETS + /vendor/jquery-ui.js
-      PATH_NODE + /components-jqueryui/themes/smoothness/**: PATH_PUBLIC_ASSETS + /vendor/jquery-ui/themes/smoothness/
-      PATH_NODE + /font-awesome/css/all.css: PATH_PUBLIC_ASSETS + /vendor/fontawesome.css
-      PATH_NODE + /font-awesome/webfonts/**: PATH_PUBLIC_ASSETS + /webfonts/
-      PATH_RESOURCES + /js/test.js: PATH_PUBLIC_ASSETS + /js/test.js
-      PATH_RES_ASSET_IMAGES+/**?extensions=png,gif: PATH_PUBLIC_ASSETS+/images/
-      PATH_RES_VIEWS + /**?extensions=css,js: PATH_PUBLIC_ASSETS?remove_extension_folder
+      $NODE + /jquery/dist/jquery.js: $ASSETS + /vendor/jquery.js
+      $NODE + /components-jqueryui/jquery-ui.js: $ASSETS + /vendor/jquery-ui.js
+      $NODE + /components-jqueryui/themes/smoothness/**: $ASSETS + /vendor/jquery-ui/themes/smoothness/
+      $NODE + /font-awesome/css/all.css: $ASSETS + /vendor/fontawesome.css
+      $NODE + /font-awesome/webfonts/**: $ASSETS + /webfonts/
+      $RESOURCES + /js/test.js: $ASSETS + /js/test.js
+      $IMAGES+/**?extensions=png,gif: $ASSETS+/images/
+      $VIEWS + /**?extensions=css,js: $ASSETS?remove_extension_folder
 
   -
     name: Replace text
     plugin: replace_text
-    src: PATH_PUBLIC_ASSETS + /js/test.js
+    src: $ASSETS + /js/test.js
     find: This is some text to replace
     replace: Text has been replaced
     extensions:
@@ -125,31 +126,31 @@ tasks:
   -
     name: Create autoinit
     plugin: combine
-    output: PATH_PUBLIC_ASSETS + /vendor/autoinit.js
+    output: $ASSETS + /vendor/autoinit.js
     paths:
-      - PATH_VENDOR + /hnhdigital-os/laravel-frontend-asset-loader/js/**
-      - PATH_VENDOR + /hnhdigital-os/laravel-frontend-assets/js/**
+      - $VENDOR + /hnhdigital-os/laravel-frontend-asset-loader/js/**
+      - $VENDOR + /hnhdigital-os/laravel-frontend-assets/js/**
 
   -
     name: Process sass
     plugin: sass
-    src: PATH_RESOURCES + /sass/app.scss
-    dest: PATH_PUBLIC_ASSETS + /app.css
+    src: $RESOURCES + /sass/app.scss
+    dest: $ASSETS + /app.css
     import-paths:
-      - PATH_NODE
+      - $NODE
     source-map: 
-      path: PATH_PUBLIC_ASSETS + /app.map
+      path: $ASSETS + /app.map
 
   - 
     name: Revision assets
     plugin: revision
     cache: true
     minify: true
-    src: PATH_PUBLIC_ASSETS
-    dest: PATH_PUBLIC_BUILD
+    src: $ASSETS
+    dest: $BUILD
     manifest:
       formats:
-        json: PATH_PUBLIC_BUILD + /rev-manifest.json
+        json: $BUILD + /rev-manifest.json
         php: config/rev-manifest.php
 
 
