@@ -29,7 +29,7 @@ Via commmand line:
 Download the latest build:
 
 `curl -o ./fs-tasker -LSs https://github.com/hnhdigital-os/fs-tasker/raw/master/builds/fs-tasker`
-`chmod 755 ./fs-tasker`
+`chmod a+x ./fs-tasker`
 
 Move it local bin:
 
