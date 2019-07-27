@@ -108,6 +108,8 @@ trait TasksTrait
             return false;
         }
 
+        $this->line(sprintf('Using configuration found at <info>%s</info>', $this->config_yaml_path));
+
         // Config path provided.
         if (!Arr::has($this->config, 'environments')) {
             $this->error('No environments specified!');
