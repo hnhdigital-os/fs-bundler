@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use Composer\Semver\Comparator;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Symfony\Component\Yaml\Exception\ParseException;
@@ -132,6 +133,9 @@ trait TasksTrait
         $this->line(sprintf('Running <info>%s</info> mode', $this->env));
         $this->line('');
 
+        // Tasker config.
+        $this->tasker = Arr::get($this->config, 'tasker', []);
+
         // Options.
         $this->options = Arr::get($this->config, 'options', []);
 
@@ -146,6 +150,29 @@ trait TasksTrait
             $config['task_id'] = $task_id;
 
             $this->tasks[] = new $plugin_class($this, $config);
+        }
+
+        return true;
+    }
+
+    /**
+     * Prepare running tasker (post-config)
+     *
+     * @return bool
+     */
+    public function prepare()
+    {
+        if (Arr::has($this->tasker, 'version')) {
+
+            if (!Comparator::greaterThanOrEqualTo(config('app.version'), Arr::get($this->tasker, 'version'))) {
+                $this->error(sprintf('fs-tasker v%s is specified', Arr::get($this->tasker, 'version')));
+                $this->line('');
+                $this->line('Please run <info>fs-tasker self-update</info> to upgrade to the latest version.');
+                $this->line('');
+
+                return false;
+            }
+
         }
 
         return true;

@@ -37,10 +37,14 @@ class DryCommand extends Command
         $this->dry = true;
         $this->cwd = getcwd();
 
-        $this->info('Dry run of the tasker...');
+        $this->info(sprintf('Dry run tasker v%s', config('app.version')));
         $this->line('');
 
         if (!$this->parseConfig()) {
+            return;
+        }
+
+        if (!$this->prepare()) {
             return;
         }
 

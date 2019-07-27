@@ -52,6 +52,9 @@ fs-tasker <command> [options] [arguments]
 An example of the tasker configuration using YAML.
 
 ```yaml
+tasker:
+  version: 1.0.8
+
 environments:
   - dev
   - staging

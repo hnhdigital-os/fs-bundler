@@ -38,10 +38,14 @@ class RunCommand extends Command
     {
         $this->cwd = getcwd();
 
-        $this->info('Running tasker...');
+        $this->info(sprintf('Running tasker v%s', config('app.version')));
         $this->line('');
 
         if (!$this->parseConfig()) {
+            return;
+        }
+
+        if (!$this->prepare()) {
             return;
         }
 
