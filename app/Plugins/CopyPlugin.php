@@ -56,7 +56,7 @@ class CopyPlugin extends BasePlugin
                 $method_arguments = ($method == self::COPY_BASE) ? [true, 1] : [];
 
                 $paths = $this->scan($source_path, false, ...$method_arguments);
-                $paths = $this->filterPathExtensions($paths, array_get($options, 'source.extensions', ''));
+                $paths = $this->filterPathExtensions($paths, Arr::get($options, 'source.extensions', ''));
 
                 if (substr($destination_path, -1) != '/') {
                     $destination_path .= '/';
@@ -117,7 +117,7 @@ class CopyPlugin extends BasePlugin
              */
             case self::COPY_ALL:
                 $paths = $this->scan($source_path, false);
-                $paths = $this->filterPathExtensions($paths, array_get($options, 'source.extensions', ''));
+                $paths = $this->filterPathExtensions($paths, Arr::get($options, 'source.extensions', ''));
 
                 if ($this->isVerbose() && !$this->isVeryVerbose() && count($paths) > 0) {
                     $this->process->line(sprintf(
@@ -135,7 +135,7 @@ class CopyPlugin extends BasePlugin
                 foreach ($paths as $path) {
                     $new_path = str_replace($source_path, $destination_path, $path);
 
-                    if (array_has($options, 'destination.remove_extension_folder')) {
+                    if (Arr::has($options, 'destination.remove_extension_folder')) {
                         $pathinfo = pathinfo($new_path);
 
                         if (Arr::has($pathinfo, 'extension')) {
@@ -155,7 +155,7 @@ class CopyPlugin extends BasePlugin
                     return is_file($source_path.$path);
                 });
 
-                $paths = $this->filterPathExtensions($paths, array_get($options, 'source.extensions', ''));
+                $paths = $this->filterPathExtensions($paths, Arr::get($options, 'source.extensions', ''));
 
                 if ($this->isVerbose() && !$this->isVeryVerbose() && count($paths) > 0) {
                     $this->process->line(sprintf(

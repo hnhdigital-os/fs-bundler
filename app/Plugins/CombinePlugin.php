@@ -114,10 +114,10 @@ class CombinePlugin extends BasePlugin
         }
 
         // Lookup file paths.
-        if (!isset($file_paths)) {
+        if (! isset($file_paths)) {
             $method_arguments = ($method == 'base') ? [true, 1] : [];
             $file_paths = $this->scan($path, false, ...$method_arguments);
-            $file_paths = $this->filterPathExtensions($file_paths, array_get($options, 'filter', ''));
+            $file_paths = $this->filterPathExtensions($file_paths, Arr::get($options, 'filter', ''));
         }
 
         foreach ($file_paths as $file_path) {

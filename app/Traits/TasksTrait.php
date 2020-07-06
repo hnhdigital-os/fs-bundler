@@ -164,9 +164,8 @@ trait TasksTrait
      */
     public function prepare()
     {
-        if (Arr::has($this->tasker, 'version')) {
-
-            if (!Comparator::greaterThanOrEqualTo(config('app.version'), Arr::get($this->tasker, 'version'))) {
+        if (config('app.version') !== 'unreleased' && Arr::has($this->tasker, 'version')) {
+            if (! Comparator::greaterThanOrEqualTo(config('app.version'), Arr::get($this->tasker, 'version'))) {
                 $this->error(sprintf('fs-tasker v%s is specified', Arr::get($this->tasker, 'version')));
                 $this->line('');
                 $this->line('Please run <info>fs-tasker self-update</info> to upgrade to the latest version.');
@@ -174,7 +173,6 @@ trait TasksTrait
 
                 return false;
             }
-
         }
 
         return true;

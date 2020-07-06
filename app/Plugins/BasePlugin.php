@@ -49,7 +49,7 @@ abstract class BasePlugin
             $this->environments = [];
         }
 
-        if (count($this->environments) === 0 || !Arr::has($this->config, 'environments')) {
+        if (count($this->environments) === 0 || ! Arr::has($this->config, 'environments')) {
             $this->environments = $this->process->getEnvironments();
         }
     }
@@ -194,7 +194,7 @@ abstract class BasePlugin
         list($destination_path, $destination_options) = $this->parseOptions($destination_path);
 
         if (($index = stripos($source_path, '*.')) !== false) {
-            array_set($source_options, 'filter', substr($source_path, $index + 2));
+            Arr::set($source_options, 'filter', substr($source_path, $index + 2));
             $source_path = substr($source_path, 0, $index + 1);
         }
 
