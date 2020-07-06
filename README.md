@@ -28,7 +28,7 @@ Via commmand line:
 
 Download the latest build:
 
-`curl -o ./fs-tasker -LSs https://github.com/hnhdigital-os/fs-tasker/raw/master/builds/fs-tasker`
+`curl -o ./fs-tasker -LS https://github.com/hnhdigital-os/fs-tasker/raw/master/builds/fs-tasker`
 `chmod a+x ./fs-tasker`
 
 Move it local bin:
@@ -53,7 +53,7 @@ An example of the tasker configuration using YAML.
 
 ```yaml
 tasker:
-  version: 1.0.8
+  version: 1.1.1
 
 environments:
   - dev
