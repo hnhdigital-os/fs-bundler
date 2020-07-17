@@ -43,7 +43,7 @@ class CreatePlugin extends BasePlugin
             $this->handlePath(...$path);
         }
 
-        return true;
+        return 0;
     }
 
     /**

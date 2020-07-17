@@ -84,10 +84,12 @@ class CombinePlugin extends BasePlugin
         }
 
         if ($this->process->isDry()) {
-            return;
+            return 0;
         }
 
         File::put($this->output_path, $contents);
+
+        return 0;
     }
 
     /**

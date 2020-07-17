@@ -75,7 +75,7 @@ class EmptyPlugin extends BasePlugin
             $this->handlePath(...$path);
         }
 
-        return true;
+        return 0;
     }
 
     /**

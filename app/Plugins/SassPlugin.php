@@ -152,7 +152,7 @@ class SassPlugin extends BasePlugin
     public function handle()
     {
         if ($this->process->isDry()) {
-            return;
+            return 0;
         }
 
         $import_path = dirname($this->src_path);
@@ -200,7 +200,7 @@ class SassPlugin extends BasePlugin
         } catch (\Exception $e) {
             $this->process->error($e->getMessage());
 
-            return;
+            return 1;
         }
 
         if ($this->checkPath(dirname($this->dest_path)) === false) {
@@ -217,6 +217,6 @@ class SassPlugin extends BasePlugin
             $this->process->line(sprintf('   <fg=yellow>Created</> %s', str_replace($this->process->getCwd(), '', Arr::get($this->source_map, 'path'))));
         }
 
-        return true;
+        return 0;
     }
 }

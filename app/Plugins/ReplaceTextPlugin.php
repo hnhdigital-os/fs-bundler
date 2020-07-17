@@ -62,7 +62,7 @@ class ReplaceTextPlugin extends BasePlugin
                     $this->handleFile($path);
                 }
 
-                return true;
+                return 0;
             /*
              * Copying a single file.
              */
@@ -75,8 +75,10 @@ class ReplaceTextPlugin extends BasePlugin
             case self::COPY_ERROR:
                 $this->process->error(sprintf('%s not found.', $this->src_path));
 
-                return false;
+                return 1;
         }
+
+        return 0;
     }
 
     /**
@@ -89,7 +91,7 @@ class ReplaceTextPlugin extends BasePlugin
     private function handleFile($path)
     {
         if (!file_exists($path)) {
-            return false;
+            return 1;
         }
 
         $method = 'str_replace';
@@ -113,7 +115,7 @@ class ReplaceTextPlugin extends BasePlugin
 
         // When doing a dry run, we just count matches and return.
         if ($this->process->isDry()) {
-            return true;
+            return 0;
         }
 
         // Find and replace.
@@ -122,6 +124,6 @@ class ReplaceTextPlugin extends BasePlugin
         // Update file.
         File::put($path, $content);
 
-        return true;
+        return 0;
     }
 }

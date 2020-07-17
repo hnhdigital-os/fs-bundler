@@ -102,6 +102,8 @@ class CopyPlugin extends BasePlugin
         foreach ($this->paths as $path) {
             $this->handlePath(...$path);
         }
+
+        return 0;
     }
 
     /**

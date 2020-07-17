@@ -34,7 +34,7 @@ class ExecPlugin extends BasePlugin
      */
     public function verify()
     {
-        if (!$this->verifyRequiredConfig(['executable'])) {
+        if (! $this->verifyRequiredConfig(['executable'])) {
             return;
         }
 
@@ -122,14 +122,26 @@ class ExecPlugin extends BasePlugin
             return;
         }
 
-        $run_function = $this->isVerbose() ? 'passthru' : 'exec';
         $arguments = $this->arguments;
-        $arguments .= !$this->isVerbose() ? ' > /dev/null 2> /dev/null' : '';
+        //$arguments .= !$this->isVerbose() ? ' > /dev/null 2> /dev/null' : '';
 
         if ($this->isVerbose()) {
             $this->process->line(sprintf('Excuting %s %s', $this->executable, $arguments));
         }
 
-        $run_function(sprintf('%s %s', $this->executable, $arguments));
+        if ($this->isVerbose()) {
+            passthru(sprintf('%s %s', $this->executable, $arguments), $exit_code);
+
+            return $exit_code;
+        }
+
+        exec(sprintf('%s %s', $this->executable, $arguments), $output, $exit_code);
+
+        if ($exit_code > 0) {
+            $this->process->line($output);
+            $this->process->line('');
+        }
+
+        return $exit_code;
     }
 }

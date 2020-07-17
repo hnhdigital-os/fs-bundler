@@ -104,6 +104,8 @@ class RevisionPlugin extends BasePlugin
         if (Arr::has($this->manifest, 'formats.php')) {
             $this->generatePhpManifest();
         }
+
+        return 0;
     }
 
     /**

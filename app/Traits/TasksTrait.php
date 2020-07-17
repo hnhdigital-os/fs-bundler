@@ -348,6 +348,11 @@ trait TasksTrait
             $this->line(sprintf('#%s <info>%s</info>', $task->getId(), $task->getName()));
         }
 
-        $task->handle();
+        $exit_code = $task->handle();
+
+        if ($exit_code > 0) {
+            $this->line(sprintf('#%s <error>%s</error> Failed with exit code %s', $task->getId(), $task->getName(), $exit_code));
+            $this->line('');
+        }
     }
 }
