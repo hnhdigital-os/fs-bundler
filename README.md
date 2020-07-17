@@ -18,7 +18,7 @@ This package has been developed by H&H|Digital, an Australian botique developer.
 
 ## Requirements
 
-* PHP 7.1.3 (min)
+* PHP 7.2.5 (min)
 
 ## Installation
 
