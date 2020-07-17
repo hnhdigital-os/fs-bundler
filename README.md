@@ -53,7 +53,7 @@ An example of the tasker configuration using YAML.
 
 ```yaml
 tasker:
-  version: 1.1.1
+  version: 1.1.2
 
 environments:
   - dev
