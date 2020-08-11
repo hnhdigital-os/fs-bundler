@@ -22,16 +22,19 @@ This package has been developed by H&H|Digital, an Australian botique developer.
 
 Via commmand line:
 
-`bash <(curl -s https://hnhdigital-os.github.io/fs-tasker/builds/install)`
+`wget -O fs-tasker-installer https://hnhdigital-os.github.io/fs-tasker/builds/install`
 
-Download the latest build:
+`chmod u+x fs-tasker-installer && sudo ./fs-tasker-installer && unlink fs-tasker-installer`
+
+OR, Download the latest build:
 
 `curl -o ./fs-tasker -LS https://github.com/hnhdigital-os/fs-tasker/raw/master/builds/fs-tasker`
 `chmod a+x ./fs-tasker`
+``
 
 Move it local bin:
 
-`mv ./fs-tasker /usr/local/bin/fs-tasker`
+`sudo mv ./fs-tasker /usr/local/bin/fs-tasker`
 
 ## Updating
 
