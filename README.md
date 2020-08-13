@@ -29,7 +29,6 @@ OR, Download the latest build:
 
 `curl -o ./fs-tasker -LsS https://github.com/hnhdigital-os/fs-tasker/raw/master/builds/fs-tasker`
 `chmod a+x ./fs-tasker`
-``
 
 Move it local bin:
 
