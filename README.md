@@ -23,7 +23,8 @@ This package has been developed by H&H|Digital, an Australian botique developer.
 Via commmand line:
 
 `curl -o fs-tasker-installer.sh -sL https://hnhdigital-os.github.io/fs-tasker/builds/install`
-`sudo bash fs-tasker-installer.sh && unlink fs-tasker-installer`
+
+`sudo bash fs-tasker-installer.sh && unlink fs-tasker-installer.sh`
 
 OR, Download the latest build:
 
