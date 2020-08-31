@@ -68,6 +68,6 @@ class CreatePlugin extends BasePlugin
             return;
         }
 
-        File::makeDirectory($path);
+        File::makeDirectory($path, 0777, true);
     }
 }
