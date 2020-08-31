@@ -267,7 +267,12 @@ trait TasksTrait
             // Skip task if current environment not applicable for this environment.
             if (!$task->checkEnvironment()) {
                 if ($this->getOutput()->isVerbose()) {
-                    $this->line(sprintf('#%s <info>%s</info> <error>skipped</error>', $task->getId(), $task->getName()));
+                    $this->line(sprintf(
+                        '#%s <info>%s</info> <error>skipped</error> only for <fg=magenta>%s</>',
+                        $task->getId(),
+                        $task->getName(),
+                        implode(',', $task->getEnvironments())
+                    ));
                 }
 
                 continue;
@@ -338,7 +343,12 @@ trait TasksTrait
         // Skip task if current environment not applicable for this environment.
         if (!$task->checkEnvironment()) {
             if ($this->getOutput()->isVerbose()) {
-                $this->line(sprintf('#%s <info>%s</info> <error>skipped</error>', $task->getId(), $task->getName()));
+                $this->line(sprintf(
+                    '#%s <info>%s</info> <error>skipped</error> only for <fg=magenta>%s</>',
+                    $task->getId(),
+                    $task->getName(),
+                    implode(',', $task->getEnvironments())
+                ));
             }
 
             return;
