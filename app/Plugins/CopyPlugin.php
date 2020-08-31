@@ -63,8 +63,8 @@ class CopyPlugin extends BasePlugin
                 }
 
                 foreach ($paths as $path) {
-                    $destination_file = $destination_path.$path;
-                    $this->storePath($destination_file);
+                    $destination_file = $destination_path.basename($path);
+                    $this->storePath($destination_file, $path);
                 }
 
                 break;
