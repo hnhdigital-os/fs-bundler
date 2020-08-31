@@ -103,7 +103,7 @@ trait TasksTrait
         try {
             $this->config = Yaml::parse(file_get_contents($this->config_yaml_path));
         } catch (ParseException $e) {
-            $this->error(sprintf('Unable to parse .elixir.yml: %s', $e->getMessage()));
+            $this->error(sprintf('Unable to parse %s: %s', $this->config_yaml_path, $e->getMessage()));
 
             return false;
         }
