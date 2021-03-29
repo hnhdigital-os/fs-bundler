@@ -16,7 +16,7 @@ This package has been developed by H&H|Digital, an Australian botique developer.
 
 ## Requirements
 
-* PHP 7.2.5 (min)
+* PHP 7.3.0 (min)
 
 ## Installation
 
@@ -29,6 +29,7 @@ Via commmand line:
 OR, Download the latest build:
 
 `curl -o ./fs-tasker -LsS https://github.com/hnhdigital-os/fs-tasker/raw/master/builds/fs-tasker`
+
 `chmod a+x ./fs-tasker`
 
 Move it local bin:
@@ -53,7 +54,7 @@ An example of the tasker configuration using YAML.
 
 ```yaml
 tasker:
-  version: 1.1.2
+  version: 1.2.0
 
 environments:
   - dev
